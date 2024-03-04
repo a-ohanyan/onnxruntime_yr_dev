@@ -82,6 +82,10 @@
 #include "core/providers/vitisai/vitisai_provider_factory_creator.h"
 #endif
 
+#if defined(USE_RYZENAI)
+#include "core/providers/ryzenai/ryzenai_provider_factory_creator.h"
+#endif
+
 #if defined(USE_XNNPACK)
 #include "core/providers/xnnpack/xnnpack_provider_factory_creator.h"
 #endif

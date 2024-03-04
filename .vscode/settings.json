@@ -1,25 +1,23 @@
 {
-    // Always remove trailing whitespaces
-    "files.trimTrailingWhitespace": true,
-    "files.insertFinalNewline": true,
-    "files.trimFinalNewlines": true,
-    "editor.rulers": [
-        120
-    ],
-    "[python]": {
-        "editor.tabSize": 4,
-        // Auto sort imports
-        "editor.formatOnSave": true,
-        "editor.codeActionsOnSave": {
-            "source.organizeImports": "explicit"
-        },
-        "editor.defaultFormatter": "ms-python.black-formatter"
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "editor.rulers": [
+    120
+  ],
+  "[python]": {
+    "editor.tabSize": 4,
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
     },
-    // Enable Python linting and Pylance type checking
-    "python.analysis.typeCheckingMode": "basic",
-    "cpplint.lineLength": 120,
-    "cpplint.filters": [
-        "-build/include_subdir",
-        "-runtime/references"
-    ]
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "python.analysis.typeCheckingMode": "basic",
+  "cpplint.lineLength": 120,
+  "cpplint.filters": [
+    "-build/include_subdir",
+    "-runtime/references"
+  ],
+  "C_Cpp_Runner.msvcBatchPath": "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvarsall.bat"
 }

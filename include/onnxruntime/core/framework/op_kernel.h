@@ -267,6 +267,10 @@ using BuildKernelCreateInfoFn = KernelCreateInfo (*)();
 #define ONNX_CPU_OPERATOR_TYPED_KERNEL(name, ver, type, builder, ...) \
   ONNX_OPERATOR_TYPED_KERNEL_EX(name, kOnnxDomain, ver, type, kCpuExecutionProvider, builder, __VA_ARGS__)
 
+#define ONNX_RYZENAI_OPERATOR_TYPED_KERNEL(name, ver, type, builder, ...) \
+  ONNX_OPERATOR_TYPED_KERNEL_EX(name, kOnnxDomain, ver, type, kRyzenAIExecutionProvider, builder, __VA_ARGS__)
+
+
 #define ONNX_CPU_OPERATOR_TYPED_ML_KERNEL(name, ver, type, builder, ...) \
   ONNX_OPERATOR_TYPED_KERNEL_EX(name, kMLDomain, ver, type, kCpuExecutionProvider, builder, __VA_ARGS__)
 

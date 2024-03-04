@@ -141,108 +141,108 @@ struct ProviderHostCPU {
   virtual Status Scan__SetupSubgraphExecutionInfo(Scan<8>* p, const SessionState& session_state, const std::string& attribute_name, const SessionState& subgraph_session_state) = 0;
   virtual Status Scan__SetupSubgraphExecutionInfo(Scan<9>* p, const SessionState& session_state, const std::string& attribute_name, const SessionState& subgraph_session_state) = 0;
 
-#ifndef DISABLE_CONTRIB_OPS
-  virtual Status embed_layer_norm__CheckInputs(const OpKernelContext* context, bool quantizedVersion) = 0;
-  virtual Status bias_gelu_helper__CheckInputs(const OpKernelContext* context) = 0;
+  #ifndef DISABLE_CONTRIB_OPS
+    virtual Status embed_layer_norm__CheckInputs(const OpKernelContext* context, bool quantizedVersion) = 0;
+    virtual Status bias_gelu_helper__CheckInputs(const OpKernelContext* context) = 0;
 
-  virtual Status LongformerAttentionBase__CheckInputs(const contrib::LongformerAttentionBase* p,
-                                                      const TensorShape& input_shape,
-                                                      const TensorShape& weights_shape,
-                                                      const TensorShape& bias_shape,
-                                                      const TensorShape& mask_shape,
-                                                      const TensorShape& global_weights_shape,
-                                                      const TensorShape& global_bias_shape,
-                                                      const TensorShape& global_shape) = 0;
+    virtual Status LongformerAttentionBase__CheckInputs(const contrib::LongformerAttentionBase* p,
+                                                        const TensorShape& input_shape,
+                                                        const TensorShape& weights_shape,
+                                                        const TensorShape& bias_shape,
+                                                        const TensorShape& mask_shape,
+                                                        const TensorShape& global_weights_shape,
+                                                        const TensorShape& global_bias_shape,
+                                                        const TensorShape& global_shape) = 0;
 
-  virtual Status AttentionBase__CheckInputs(const contrib::AttentionBase* p,
-                                            const TensorShape& input_shape,
-                                            const TensorShape& weights_shape,
-                                            const TensorShape& bias_shape,
-                                            const Tensor*& mask_index,
-                                            const Tensor* past,
-                                            const Tensor* relative_position_bias,
-                                            void* parameters,
-                                            const int max_threads_per_block,
-                                            const Tensor* past_seq_len) = 0;
+    virtual Status AttentionBase__CheckInputs(const contrib::AttentionBase* p,
+                                              const TensorShape& input_shape,
+                                              const TensorShape& weights_shape,
+                                              const TensorShape& bias_shape,
+                                              const Tensor*& mask_index,
+                                              const Tensor* past,
+                                              const Tensor* relative_position_bias,
+                                              void* parameters,
+                                              const int max_threads_per_block,
+                                              const Tensor* past_seq_len) = 0;
 
-  virtual Tensor* AttentionBase__GetPresent(const contrib::AttentionBase* p,
-                                            OpKernelContext* context,
-                                            const Tensor* past,
-                                            int batch_size,
-                                            int head_size,
-                                            int sequence_length,
-                                            int& past_sequence_length) = 0;
+    virtual Tensor* AttentionBase__GetPresent(const contrib::AttentionBase* p,
+                                              OpKernelContext* context,
+                                              const Tensor* past,
+                                              int batch_size,
+                                              int head_size,
+                                              int sequence_length,
+                                              int& past_sequence_length) = 0;
 
-  // BeamSearch
-  virtual void BeamSearch__Init(contrib::transformers::BeamSearch* p, const OpKernelInfo& info) = 0;
-  virtual Status BeamSearch__Compute(const contrib::transformers::BeamSearch* p, OpKernelContext* ctx) = 0;
-  virtual Status BeamSearch__SetupSubgraphExecutionInfo(contrib::transformers::BeamSearch* p,
-                                                        const SessionState& session_state,
-                                                        const std::string& attribute_name,
-                                                        const SessionState& subgraph_session_state) = 0;
-  virtual Status WhisperBeamSearch__Compute(const contrib::transformers::WhisperBeamSearch* p, OpKernelContext* ctx) = 0;
-
-  virtual void BeamSearchParameters__ParseFromAttributes(contrib::transformers::BeamSearchParameters* p, const OpKernelInfo& info) = 0;
-
-  virtual void GreedySearchParameters__ParseFromAttributes(contrib::transformers::GreedySearchParameters* p, const OpKernelInfo& info) = 0;
-
-  virtual void SamplingParameters__ParseFromAttributes(contrib::transformers::SamplingParameters* p, const OpKernelInfo& info) = 0;
-
-  virtual void WhisperBeamSearchParameters__ParseFromAttributes(contrib::transformers::WhisperBeamSearchParameters* p, const OpKernelInfo& info) = 0;
-
-  // GreedySearch
-  virtual void GreedySearch__Init(contrib::transformers::GreedySearch* p, const OpKernelInfo& info) = 0;
-  virtual Status GreedySearch__Compute(const contrib::transformers::GreedySearch* p, OpKernelContext* ctx) = 0;
-  virtual Status GreedySearch__SetupSubgraphExecutionInfo(contrib::transformers::GreedySearch* p,
+    // BeamSearch
+    virtual void BeamSearch__Init(contrib::transformers::BeamSearch* p, const OpKernelInfo& info) = 0;
+    virtual Status BeamSearch__Compute(const contrib::transformers::BeamSearch* p, OpKernelContext* ctx) = 0;
+    virtual Status BeamSearch__SetupSubgraphExecutionInfo(contrib::transformers::BeamSearch* p,
                                                           const SessionState& session_state,
                                                           const std::string& attribute_name,
                                                           const SessionState& subgraph_session_state) = 0;
+    virtual Status WhisperBeamSearch__Compute(const contrib::transformers::WhisperBeamSearch* p, OpKernelContext* ctx) = 0;
 
-  virtual void Sampling__Init(contrib::transformers::Sampling* p, const OpKernelInfo& info) = 0;
-  virtual Status Sampling__Compute(const contrib::transformers::Sampling* p, OpKernelContext* ctx) = 0;
-  virtual Status Sampling__SetupSubgraphExecutionInfo(contrib::transformers::Sampling* p, const SessionState& session_state, const std::string& attribute_name, const SessionState& subgraph_session_state) = 0;
+    virtual void BeamSearchParameters__ParseFromAttributes(contrib::transformers::BeamSearchParameters* p, const OpKernelInfo& info) = 0;
 
-#ifdef ENABLE_ATEN
-  virtual Status ATen__Compute(const contrib::ATen* p, OpKernelContext* p_ctx) = 0;
-#endif
-#endif
+    virtual void GreedySearchParameters__ParseFromAttributes(contrib::transformers::GreedySearchParameters* p, const OpKernelInfo& info) = 0;
 
-#ifdef ENABLE_TRAINING_OPS
-  virtual Status contrib__Group__Compute(const contrib::Group* p, OpKernelContext* context) = 0;
-  virtual Status contrib__PassThrough__Compute(const contrib::PassThrough* p, OpKernelContext* context) = 0;
-  virtual void contrib__VerifyLogitWeightAndLabelShape(const TensorShape& logit_shape, const TensorShape& label_shape, const TensorShape* weight_shape) = 0;
-  virtual void contrib__GetNDCFromLogitAndLabelShape(const TensorShape& logit_shape, const TensorShape& label_shape, int64_t& N_D, int64_t& C) = 0;
-  virtual void contrib__GetPermutationAndShape(bool ncd_to_ndc, const TensorShape& tensor_shape, TensorShapeVector& new_shape, std::vector<size_t>& permutations) = 0;
-  virtual Status contrib__PrepareForTrainingCompute(const TensorShape& input_shape, int num_outputs, int64_t& axis, int& before_dims, int& after_dims_including_split_axis, int& after_dims_excluding_split, std::vector<int64_t>& split_sizes) = 0;
-  // From cpu/optimizer/adamwbase.h
-  virtual Status contrib__AdamWOptimizerBase__PrepareForCompute(const contrib::AdamWOptimizerBase* p, OpKernelContext* ctx, contrib__AdamWOptimizerBase__Prepare& prepare) = 0;
-  // From cpu/optimizer/sgdbase.h
-  virtual Status contrib__SGDOptimizerV2Base__PrepareForCompute(const contrib::SGDOptimizerV2Base* p, OpKernelContext* ctx, contrib__SGDOptimizerV2Base__Prepare& prepare) = 0;
+    virtual void SamplingParameters__ParseFromAttributes(contrib::transformers::SamplingParameters* p, const OpKernelInfo& info) = 0;
 
-  // Should remove the shrunken_gather include from ENABLE_TRAINING_OPS once 1). compute optimizer is enabled for inference or
-  // 2). this is needed by inference for other purpose.
-  virtual void contrib__ShrunkenGatherCommon__CheckInput(const contrib::ShrunkenGatherCommon* p,
-                                                         const Tensor* input_tensor, const Tensor* indices_tensor,
-                                                         int64_t axis_in) const = 0;
-#endif
+    virtual void WhisperBeamSearchParameters__ParseFromAttributes(contrib::transformers::WhisperBeamSearchParameters* p, const OpKernelInfo& info) = 0;
 
-#ifdef ENABLE_TRAINING
-  virtual void contrib__record_event_in_tensor(const Tensor& event_id_tensor) = 0;
-  virtual void contrib__wait_event_in_tensor(const Tensor& event_id_tensor) = 0;
-  virtual Status contrib__YieldOp__Compute(const contrib::YieldOp* p, OpKernelContext* context) = 0;
+    // GreedySearch
+    virtual void GreedySearch__Init(contrib::transformers::GreedySearch* p, const OpKernelInfo& info) = 0;
+    virtual Status GreedySearch__Compute(const contrib::transformers::GreedySearch* p, OpKernelContext* ctx) = 0;
+    virtual Status GreedySearch__SetupSubgraphExecutionInfo(contrib::transformers::GreedySearch* p,
+                                                            const SessionState& session_state,
+                                                            const std::string& attribute_name,
+                                                            const SessionState& subgraph_session_state) = 0;
 
-  // From aten_op.h
-  virtual bool contrib__IsATenOperatorExecutorInitialized() = 0;
-  virtual Status contrib__ExecuteReduceSumATen(OpKernelContext* p_ctx, const gsl::span<const int64_t>& axes, bool keepdims) = 0;
-#endif
+    virtual void Sampling__Init(contrib::transformers::Sampling* p, const OpKernelInfo& info) = 0;
+    virtual Status Sampling__Compute(const contrib::transformers::Sampling* p, OpKernelContext* ctx) = 0;
+    virtual Status Sampling__SetupSubgraphExecutionInfo(contrib::transformers::Sampling* p, const SessionState& session_state, const std::string& attribute_name, const SessionState& subgraph_session_state) = 0;
 
-#ifdef ENABLE_TRITON
-  virtual Status contrib__TritonOp__Compute(const contrib::TritonOp* p, OpKernelContext* context) = 0;
-  virtual bool contrib__IsTritonOpExecutorInitialized() = 0;
-  virtual Status contrib__ExecuteTritonOpByFuncName(
-      OpKernelContext* p_ctx, const std::string& func_name, size_t input_count, size_t output_count,
-      const InlinedHashMap<std::string, std::pair<std::string, int>>& kwargs) = 0;
-#endif
+    #ifdef ENABLE_ATEN
+      virtual Status ATen__Compute(const contrib::ATen* p, OpKernelContext* p_ctx) = 0;
+    #endif
+  #endif
+
+  #ifdef ENABLE_TRAINING_OPS
+    virtual Status contrib__Group__Compute(const contrib::Group* p, OpKernelContext* context) = 0;
+    virtual Status contrib__PassThrough__Compute(const contrib::PassThrough* p, OpKernelContext* context) = 0;
+    virtual void contrib__VerifyLogitWeightAndLabelShape(const TensorShape& logit_shape, const TensorShape& label_shape, const TensorShape* weight_shape) = 0;
+    virtual void contrib__GetNDCFromLogitAndLabelShape(const TensorShape& logit_shape, const TensorShape& label_shape, int64_t& N_D, int64_t& C) = 0;
+    virtual void contrib__GetPermutationAndShape(bool ncd_to_ndc, const TensorShape& tensor_shape, TensorShapeVector& new_shape, std::vector<size_t>& permutations) = 0;
+    virtual Status contrib__PrepareForTrainingCompute(const TensorShape& input_shape, int num_outputs, int64_t& axis, int& before_dims, int& after_dims_including_split_axis, int& after_dims_excluding_split, std::vector<int64_t>& split_sizes) = 0;
+    // From cpu/optimizer/adamwbase.h
+    virtual Status contrib__AdamWOptimizerBase__PrepareForCompute(const contrib::AdamWOptimizerBase* p, OpKernelContext* ctx, contrib__AdamWOptimizerBase__Prepare& prepare) = 0;
+    // From cpu/optimizer/sgdbase.h
+    virtual Status contrib__SGDOptimizerV2Base__PrepareForCompute(const contrib::SGDOptimizerV2Base* p, OpKernelContext* ctx, contrib__SGDOptimizerV2Base__Prepare& prepare) = 0;
+
+    // Should remove the shrunken_gather include from ENABLE_TRAINING_OPS once 1). compute optimizer is enabled for inference or
+    // 2). this is needed by inference for other purpose.
+    virtual void contrib__ShrunkenGatherCommon__CheckInput(const contrib::ShrunkenGatherCommon* p,
+                                                          const Tensor* input_tensor, const Tensor* indices_tensor,
+                                                          int64_t axis_in) const = 0;
+  #endif
+
+  #ifdef ENABLE_TRAINING
+    virtual void contrib__record_event_in_tensor(const Tensor& event_id_tensor) = 0;
+    virtual void contrib__wait_event_in_tensor(const Tensor& event_id_tensor) = 0;
+    virtual Status contrib__YieldOp__Compute(const contrib::YieldOp* p, OpKernelContext* context) = 0;
+
+    // From aten_op.h
+    virtual bool contrib__IsATenOperatorExecutorInitialized() = 0;
+    virtual Status contrib__ExecuteReduceSumATen(OpKernelContext* p_ctx, const gsl::span<const int64_t>& axes, bool keepdims) = 0;
+  #endif
+
+  #ifdef ENABLE_TRITON
+    virtual Status contrib__TritonOp__Compute(const contrib::TritonOp* p, OpKernelContext* context) = 0;
+    virtual bool contrib__IsTritonOpExecutorInitialized() = 0;
+    virtual Status contrib__ExecuteTritonOpByFuncName(
+        OpKernelContext* p_ctx, const std::string& func_name, size_t input_count, size_t output_count,
+        const InlinedHashMap<std::string, std::pair<std::string, int>>& kwargs) = 0;
+  #endif
 
 #endif
 };
