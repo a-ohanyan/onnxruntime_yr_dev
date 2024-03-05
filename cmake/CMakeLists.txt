@@ -83,7 +83,7 @@ option(onnxruntime_CUDA_MINIMAL "Build CUDA without any operations apart from me
 option(onnxruntime_ENABLE_CUDA_LINE_NUMBER_INFO "When building with CUDA support, generate device code line number information." OFF)
 option(onnxruntime_USE_OPENVINO "Build with OpenVINO support" OFF)
 option(onnxruntime_USE_COREML "Build with CoreML support" OFF)
-option(onnxruntime_USE_RYZENAI "Build with RyzenAI support" ON)
+option(onnxruntime_USE_RYZENAI "Build with RyzenAI support" OFF)
 option(onnxruntime_USE_NNAPI_BUILTIN "Build with builtin NNAPI lib for Android NNAPI support" OFF)
 option(onnxruntime_USE_QNN "Build with QNN support" OFF)
 option(onnxruntime_USE_SNPE "Build with SNPE support" OFF)

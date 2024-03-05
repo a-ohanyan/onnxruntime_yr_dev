@@ -85,6 +85,14 @@ constexpr ProviderInfo kProvidersInPriorityOrder[] =
 #endif
         },
         {
+            kRyzenAIExecutionProvider,
+#ifdef USE_RYZENAI
+            true,
+#else
+            false,
+#endif
+        },
+        {
             kQnnExecutionProvider,
 #ifdef USE_QNN
             true,
