@@ -22,6 +22,10 @@ std::unique_ptr<IExecutionProvider> DefaultCpuExecutionProvider(bool enable_aren
   return CPUProviderFactoryCreator::Create(enable_arena)->CreateProvider();
 }
 
+std::unique_ptr<IExecutionProvider> RyzenAIExecutionProvider(bool enable_arena) {
+  return RyzenAIProviderFactoryCreator::Create(enable_arena)->CreateProvider();
+}
+
 std::unique_ptr<IExecutionProvider> DefaultTensorrtExecutionProvider() {
 #ifdef USE_TENSORRT
   OrtTensorRTProviderOptions params{

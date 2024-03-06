@@ -37,3 +37,6 @@
 #ifdef USE_CANN
 #include "core/providers/cann/cann_provider_factory.h"
 #endif
+#ifdef USE_RYZENAI
+#include "core/providers/ryzenai/ryzenai_provider_factory_creator.h"
+#endif

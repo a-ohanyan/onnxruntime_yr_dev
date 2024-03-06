@@ -1,9 +1,8 @@
-#include "onnxruntime/core/framework.h"
-#include "onnxruntime/core/providers/common.h"
+#include "../../common/common.h"
 #include "ryzenai_gemm.h"
 namespace onnxruntime {
 
-ONNX_CPU_OPERATOR_TYPED_KERNEL(
+ONNX_RYZENAI_OPERATOR_TYPED_KERNEL(
     GeMM,
     1,
     float,
@@ -18,7 +17,7 @@ Status GeMM<T>::Compute(OpKernelContext* context) const override {
 
   // Validate input shapes (assuming 2D matrices for simplicity)
   if (A->Shape().NumDimensions() != 2 || B->Shape().NumDimensions() != 2) {
-    return Status(common::MakeString("Only 2D matrices supported for MatMul."));
+    return Status(MakeString("Only 2D matrices supported for MatMul."));
   }
 
   // Get matrix dimensions
@@ -29,7 +28,7 @@ Status GeMM<T>::Compute(OpKernelContext* context) const override {
 
   // Check compatibility for multiplication
   if (A_cols != B_rows) {
-    return Status(common::MakeString("Incompatible matrix dimensions for multiplication."));
+    return Status(MakeString("Incompatible matrix dimensions for multiplication."));
   }
 
   // Allocate output tensor

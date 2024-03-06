@@ -2,7 +2,7 @@
 
 #include "core/framework/execution_provider.h"
 #include "core/graph/constants.h"
-
+namespace onnxruntime {
 // Information needed to construct RyzenAI execution providers.
 struct RyzenAIExecutionProviderInfo {
   bool create_arena{true};
@@ -34,3 +34,4 @@ class RyzenAIExecutionProvider : public IExecutionProvider {
 
 // Registers all available RyzenAI kernels
 Status RegisterKernels(KernelRegistry& kernel_registry);
+}; //namespace onnxruntime

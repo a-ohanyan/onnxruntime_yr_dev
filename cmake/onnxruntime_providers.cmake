@@ -139,6 +139,10 @@ if (onnxruntime_USE_VITISAI)
   include(onnxruntime_providers_vitisai.cmake)
 endif()
 
+if (onnxruntime_USE_RYZENAI)
+  include(onnxruntime_providers_ryzenai.cmake)
+endif()
+
 if (onnxruntime_USE_OPENVINO)
   include(onnxruntime_providers_openvino.cmake)
 endif()

@@ -8,14 +8,12 @@
 #include "core/mlas/inc/mlas.h"
 #include "core/framework/compute_capability.h"
 
-namespace {
+namespace onnxruntime {
 struct KernelRegistryAndStatus {
   std::shared_ptr<onnxruntime::KernelRegistry> kernel_registry = std::make_shared<onnxruntime::KernelRegistry>();
   onnxruntime::Status st;
 };
-}  // namespace
 
-namespace onnxruntime {
 RyzenAIExecutionProvider::RyzenAIExecutionProvider(const RyzenAIExecutionProviderInfo& info)
     : IExecutionProvider{onnxruntime::kRyzenAIExecutionProvider}, info_{info} {}
 
