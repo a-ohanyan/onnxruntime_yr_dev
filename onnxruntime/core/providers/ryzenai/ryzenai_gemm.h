@@ -11,7 +11,7 @@ class GeMM : public OpKernel {
  public:
   GeMM(const OpKernelInfo& info) : OpKernel(info) {}
 
-  Status Compute(OpKernelContext* context) const override;
+  Status Compute(OpKernelContext* context) const;
 
  private:
  TensorShape b_shape_;

@@ -16,13 +16,12 @@
     "${ONNXRUNTIME_ROOT}/core/providers/shared_library/*.cc"
   )
   source_group(TREE ${ONNXRUNTIME_ROOT}/core FILES ${onnxruntime_providers_ryzenai_cc_srcs})
-  onnxruntime_add_shared_library(onnxruntime_providers_ryzenai ${onnxruntime_providers_ryzenai_cc_srcs})
-  onnxruntime_add_include_to_target(onnxruntime_providers_ryzenai ${ONNXRUNTIME_PROVIDERS_SHARED} onnxruntime_common onnxruntime_framework onnx onnx_proto ${PROTOBUF_LIB} flatbuffers::flatbuffers)
-
-  target_link_libraries(onnxruntime_providers_ryzenai PRIVATE ${ONNXRUNTIME_PROVIDERS_SHARED})
+  onnxruntime_add_static_library(onnxruntime_providers_ryzenai ${onnxruntime_providers_ryzenai_cc_srcs})
+  onnxruntime_add_include_to_target(onnxruntime_providers_ryzenai onnxruntime_common onnxruntime_framework onnx onnx_proto ${PROTOBUF_LIB} flatbuffers::flatbuffers)
+  #target_link_libraries(onnxruntime_providers_ryzenai PRIVATE onnxruntime_common onnxruntime_framework)
   if(MSVC)
     onnxruntime_add_include_to_target(onnxruntime_providers_ryzenai dbghelp)
-    set_property(TARGET onnxruntime_providers_ryzenai APPEND_STRING PROPERTY LINK_FLAGS "-DEF:${ONNXRUNTIME_ROOT}/core/providers/ryzenai/symbols.def")
+    #set_property(TARGET onnxruntime_providers_ryzenai APPEND_STRING PROPERTY LINK_FLAGS "-DEF:${ONNXRUNTIME_ROOT}/core/providers/ryzenai/symbols.def")
   else(MSVC)
     set_property(TARGET onnxruntime_providers_ryzenai APPEND_STRING PROPERTY LINK_FLAGS "-Xlinker --version-script=${ONNXRUNTIME_ROOT}/core/providers/ryzenai/version_script.lds -Xlinker --gc-sections")
   endif(MSVC)

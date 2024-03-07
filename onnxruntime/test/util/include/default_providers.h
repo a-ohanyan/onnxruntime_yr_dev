@@ -66,7 +66,6 @@ std::unique_ptr<IExecutionProvider> DefaultDmlExecutionProvider();
 std::unique_ptr<IExecutionProvider> DefaultInternalTestingExecutionProvider(
     const std::unordered_set<std::string>& supported_ops);
 
-std::unique_ptr<IExecutionProvider> RyzenAIExecutionProvider();
 
 }  // namespace test
 }  // namespace onnxruntime

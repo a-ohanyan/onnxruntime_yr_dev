@@ -24,7 +24,7 @@ class RyzenAIExecutionProvider : public IExecutionProvider {
   explicit RyzenAIExecutionProvider(const RyzenAIExecutionProviderInfo& info);
 
   std::shared_ptr<KernelRegistry> GetKernelRegistry() const override;
-  std::unique_ptr<IDataTransfer> GetDataTransfer() const override;
+  //std::unique_ptr<IDataTransfer> GetDataTransfer() const override;
   std::vector<AllocatorPtr> CreatePreferredAllocators() override;
 
  private:

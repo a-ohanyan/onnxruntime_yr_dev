@@ -553,6 +553,11 @@ if(onnxruntime_USE_DML)
   list(APPEND onnxruntime_test_providers_dependencies onnxruntime_providers_dml)
 endif()
 
+if(onnxruntime_USE_RYZENAI)
+  list(APPEND onnxruntime_test_providers_dependencies onnxruntime_providers_ryzenai)
+endif()
+
+
 if(onnxruntime_USE_DNNL)
   list(APPEND onnxruntime_test_providers_dependencies onnxruntime_providers_dnnl)
 endif()
@@ -690,6 +695,7 @@ if(onnxruntime_USE_AZURE)
   list(APPEND onnxruntime_test_providers_dependencies onnxruntime_providers_azure)
   list(APPEND onnxruntime_test_providers_libs onnxruntime_providers_azure)
 endif()
+
 
 if(WIN32)
   if (onnxruntime_USE_TVM)

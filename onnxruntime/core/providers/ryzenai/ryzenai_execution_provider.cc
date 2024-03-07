@@ -18,14 +18,7 @@ RyzenAIExecutionProvider::RyzenAIExecutionProvider(const RyzenAIExecutionProvide
     : IExecutionProvider{onnxruntime::kRyzenAIExecutionProvider}, info_{info} {}
 
 std::vector<AllocatorPtr> RyzenAIExecutionProvider::CreatePreferredAllocators() {
-  bool create_arena = info_.create_arena;
-#if defined(USE_JEMALLOC) || defined(USE_MIMALLOC) || defined(ABSL_HAVE_ADDRESS_SANITIZER)
-  // JEMalloc/mimalloc already have memory pool, so just use device allocator.
-  create_arena = false;
-#elif !(defined(__amd64__) || defined(_M_AMD64) || defined(__aarch64__) || defined(_M_ARM64))
-  // Disable Arena allocator for x86_32 build because it may run into infinite loop when integer overflow happens
-  create_arena = false;
-#endif
+
   AllocatorCreationInfo device_info{[](int) { return std::make_unique<CPUAllocator>(); },
                                     DEFAULT_CPU_ALLOCATOR_DEVICE_ID, false};
 
@@ -33,7 +26,7 @@ std::vector<AllocatorPtr> RyzenAIExecutionProvider::CreatePreferredAllocators() 
 }
 
 
-class ONNX_OPERATOR_TYPED_KERNEL_CLASS_NAME(kRyzenAIExecutionProvider, kOnnxDomain, 1, float, MatMul);
+class ONNX_OPERATOR_TYPED_KERNEL_CLASS_NAME(kRyzenAIExecutionProvider, kOnnxDomain, 1, float, GeMM);
 
 // !!PLEASE READ BELOW!! Following that, add new entries above this comment
 
@@ -97,21 +90,21 @@ Status RegisterKernels(KernelRegistry& kernel_registry) {
   return Status::OK();
 }
 
-KernelRegistryAndStatus GetKernelRegistry() {
+KernelRegistryAndStatus GetKernelRegistryStatus() {
   KernelRegistryAndStatus ret;
   ret.st = RegisterKernels(*ret.kernel_registry);
   return ret;
 }
 
 std::shared_ptr<KernelRegistry> RyzenAIExecutionProvider::GetKernelRegistry() const {
-  static KernelRegistryAndStatus k = GetKernelRegistry();
+  static KernelRegistryAndStatus k = GetKernelRegistryStatus();
   // throw if the registry failed to initialize
   ORT_THROW_IF_ERROR(k.st);
   return k.kernel_registry;
 }
 
-std::unique_ptr<IDataTransfer> RyzenAIExecutionProvider::GetDataTransfer() const {
-  return std::make_unique<CPUDataTransfer>();
-}
+// std::unique_ptr<IDataTransfer> RyzenAIExecutionProvider::GetDataTransfer() const {
+//   return std::make_unique<CPUDataTransfer>();
+// }
 
 }  // namespace onnxruntime

@@ -328,6 +328,7 @@ else:
     libs.extend(["onnxruntime_providers_openvino.dll"])
     libs.extend(["onnxruntime_providers_cuda.dll"])
     libs.extend(["onnxruntime_providers_vitisai.dll"])
+    libs.extend(["onnxruntime_providers_ryzenai.dll"])
     # DirectML Libs
     libs.extend(["DirectML.dll"])
     if nightly_build:
