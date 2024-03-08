@@ -216,7 +216,7 @@ def run_dynamic_shape_demo(args):
 
 def run_turbo_demo(args):
     """Run demo of generating images with test prompts with ORT CUDA provider."""
-    args.engine = "TORCH"
+    args.engine = "ORT_CUDA"
     args.disable_cuda_graph = True
     base, refiner = load_pipelines(args, 1)
 

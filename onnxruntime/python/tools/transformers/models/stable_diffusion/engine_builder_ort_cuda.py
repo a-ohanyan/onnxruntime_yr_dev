@@ -25,13 +25,13 @@ class OrtCudaEngine(CudaSession):
     def __init__(
         self,
         onnx_path,
-        device_id: int = 0,
+        # device_id: int = 0,
         enable_cuda_graph: bool = False,
         disable_optimization: bool = False,
     ):
         self.onnx_path = onnx_path
-        self.provider = "CUDAExecutionProvider"
-        self.provider_options = CudaSession.get_cuda_provider_options(device_id, enable_cuda_graph)
+        # self.provider = "CPUExecutionProvider"
+        # self.provider_options = CudaSession.get_cuda_provider_options(device_id, enable_cuda_graph)
         # self.provider_options["enable_skip_layer_norm_strict_mode"] = True
 
         session_options = ort.SessionOptions()
@@ -45,14 +45,14 @@ class OrtCudaEngine(CudaSession):
             onnx_path,
             session_options,
             providers=[
-                (self.provider, self.provider_options),
+                # (self.provider, self.provider_options),
                 "CPUExecutionProvider",
             ],
         )
         logger.info("created CUDA EP session for %s", onnx_path)
 
-        device = torch.device("cuda", device_id)
-        super().__init__(ort_session, device, enable_cuda_graph)
+        device = torch.device("cpu")
+        # super().__init__(ort_session, device, enable_cuda_graph)
 
     def allocate_buffers(self, shape_dict, device):
         super().allocate_buffers(shape_dict)
@@ -69,7 +69,7 @@ class _ModelConfig:
         self,
         onnx_opset_version: int,
         use_cuda_graph: bool,
-        fp16: bool = True,
+        fp16: bool = False,
         force_fp32_ops: Optional[List[str]] = None,
         optimize_by_ort: bool = True,
     ):
@@ -85,7 +85,7 @@ class OrtCudaEngineBuilder(EngineBuilder):
         self,
         pipeline_info: PipelineInfo,
         max_batch_size=16,
-        device="cuda",
+        device="cpu",
         use_cuda_graph=False,
     ):
         """
@@ -116,9 +116,9 @@ class OrtCudaEngineBuilder(EngineBuilder):
         model_name: str,
         onnx_opset_version: int,
         use_cuda_graph: bool,
-        fp16: bool = True,
+        fp16: bool = False,
         force_fp32_ops: Optional[List[str]] = None,
-        optimize_by_ort: bool = True,
+        optimize_by_ort: bool = False,
     ):
         self.model_config[model_name] = _ModelConfig(
             onnx_opset_version,
@@ -221,7 +221,7 @@ class OrtCudaEngineBuilder(EngineBuilder):
         save_fp32_intermediate_model: bool = False,
         import_engine_dir: Optional[str] = None,
     ):
-        self.torch_device = torch.device("cuda", device_id)
+        self.torch_device = torch.device("cpu")
         self.load_models(framework_model_dir)
 
         if not os.path.isdir(engine_dir):
@@ -292,7 +292,7 @@ class OrtCudaEngineBuilder(EngineBuilder):
                             dynamic_axes=model_obj.get_dynamic_axes(),
                         )
                     del model
-                    torch.cuda.empty_cache()
+                    # torch.cuda.empty_cache()
                     gc.collect()
                 else:
                     logger.info("Found cached model: %s", onnx_path)
@@ -349,12 +349,12 @@ class OrtCudaEngineBuilder(EngineBuilder):
 
             engine = OrtCudaEngine(
                 onnx_opt_path,
-                device_id=device_id,
+                # device_id=device_id,
                 enable_cuda_graph=use_cuda_graph,
                 disable_optimization=False,
             )
 
-            logger.info("%s options for %s: %s", engine.provider, model_name, engine.provider_options)
+            #logger.info("%s options for %s: %s", engine.provider, model_name, engine.provider_options)
             built_engines[model_name] = engine
 
         self.engines = built_engines

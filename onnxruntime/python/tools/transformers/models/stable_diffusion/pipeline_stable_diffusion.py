@@ -33,7 +33,7 @@ import torch
 from diffusion_models import PipelineInfo, get_tokenizer
 from diffusion_schedulers import DDIMScheduler, EulerAncestralDiscreteScheduler, LCMScheduler, UniPCMultistepScheduler
 from engine_builder import EngineType
-#from engine_builder_ort_cuda import OrtCudaEngineBuilder
+from engine_builder_ort_cuda import OrtCudaEngineBuilder
 #from engine_builder_ort_trt import OrtTensorrtEngineBuilder
 #from engine_builder_tensorrt import TensorrtEngineBuilder
 from engine_builder_torch import TorchEngineBuilder

@@ -74,7 +74,7 @@ def parse_arguments(is_xl: bool, parser):
         "-e",
         "--engine",
         type=str,
-        default=engines[3],
+        default=engines[0],
         choices=engines,
         help="Backend engine in {engines}. "
         "ORT_CUDA is CUDA execution provider; ORT_TRT is Tensorrt execution provider; TRT is TensorRT",
@@ -385,7 +385,7 @@ def initialize_pipeline(
     version="xl-turbo",
     is_refiner: bool = False,
     is_inpaint: bool = False,
-    engine_type=EngineType.TORCH,
+    engine_type=EngineType.ORT_CUDA,
     work_dir: str = ".",
     engine_dir=None,
     onnx_opset: int = 17,
@@ -463,7 +463,7 @@ def initialize_pipeline(
             framework_model_dir=framework_model_dir,
             onnx_dir=onnx_dir,
             tmp_dir=os.path.join(work_dir or ".", engine_type.name, pipeline_info.short_name(), "tmp"),
-            device_id=torch.cuda.current_device(),
+            # device_id=torch.cuda.current_device(),
             import_engine_dir=import_engine_dir,
         )
     elif engine_type == EngineType.ORT_TRT:
