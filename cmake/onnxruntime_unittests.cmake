@@ -381,6 +381,14 @@ endif()
 
 list(APPEND onnxruntime_test_providers_src ${onnxruntime_test_providers_cpu_src})
 
+if (onnxruntime_USE_RYZENAI)
+  file(GLOB_RECURSE onnxruntime_test_providers_ryzenai_src CONFIGURE_DEPENDS
+    "${TEST_SRC_DIR}/providers/ryzenai/*"
+    )
+endif()
+
+list(APPEND onnxruntime_test_providers_src ${onnxruntime_test_providers_ryzenai_src})
+
 if (onnxruntime_USE_CUDA AND NOT onnxruntime_MINIMAL_BUILD AND NOT onnxruntime_REDUCED_OPS_BUILD)
   file(GLOB onnxruntime_test_providers_cuda_src CONFIGURE_DEPENDS
     "${TEST_SRC_DIR}/providers/cuda/*"
@@ -597,6 +605,7 @@ set(ONNXRUNTIME_TEST_LIBS
     ${PROVIDERS_QNN}
     ${PROVIDERS_SNPE}
     ${PROVIDERS_RKNPU}
+    ${PROVIDERS_RYZENAI}
     ${PROVIDERS_DML}
     ${PROVIDERS_ACL}
     ${PROVIDERS_ARMNN}

@@ -61,13 +61,13 @@ class ONNX_OPERATOR_TYPED_KERNEL_CLASS_NAME(kRyzenAIExecutionProvider, kOnnxDoma
  https://github.com/onnx/onnx/blob/main/docs/Operators.md
 *****/
 
-template <>
-KernelCreateInfo BuildKernelCreateInfo<void>() {
-  KernelCreateInfo info;
-  return info;
-}
+// template <>
+// KernelCreateInfo BuildKernelCreateInfo<void>() {
+//   KernelCreateInfo info;
+//   return info;
+// }
 
-Status RegisterOnnxOperatorKernels(KernelRegistry& kernel_registry) {
+Status RegisterRyzenAIKernels(KernelRegistry& kernel_registry) {
   static const BuildKernelCreateInfoFn function_table[] = {
     BuildKernelCreateInfo<void>,  // default entry to avoid the list become empty after ops-reducing
     BuildKernelCreateInfo<ONNX_OPERATOR_TYPED_KERNEL_CLASS_NAME(kRyzenAIExecutionProvider, kOnnxDomain, 1,
@@ -86,7 +86,7 @@ Status RegisterOnnxOperatorKernels(KernelRegistry& kernel_registry) {
 
 
 Status RegisterKernels(KernelRegistry& kernel_registry) {
-  ORT_RETURN_IF_ERROR(RegisterOnnxOperatorKernels(kernel_registry));
+  ORT_RETURN_IF_ERROR(RegisterRyzenAIKernels(kernel_registry));
   return Status::OK();
 }
 
