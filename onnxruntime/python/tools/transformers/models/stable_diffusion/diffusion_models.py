@@ -27,12 +27,12 @@ import tempfile
 from typing import Dict, List, Optional
 
 import onnx
-import onnx_graphsurgeon as gs
+#import onnx_graphsurgeon as gs
 import torch
 from diffusers.models import AutoencoderKL, ControlNetModel, UNet2DConditionModel
 from onnx import GraphProto, ModelProto, shape_inference
 from ort_optimizer import OrtStableDiffusionOptimizer
-from polygraphy.backend.onnx.loader import fold_constants
+#from polygraphy.backend.onnx.loader import fold_constants
 from transformers import CLIPTextModel, CLIPTextModelWithProjection, CLIPTokenizer
 
 from onnxruntime.transformers.onnx_model import OnnxModel
@@ -90,7 +90,7 @@ class PipelineInfo:
         use_vae=True,  # TODO: this has couple with output type of pipeline
         min_image_size=256,
         max_image_size=1024,
-        use_fp16_vae=True,
+        use_fp16_vae=False,
         use_lcm=False,
         do_classifier_free_guidance=True,
         controlnet=None,
@@ -429,7 +429,7 @@ class BaseModel:
         self,
         input_onnx_path,
         optimized_onnx_path,
-        to_fp16=True,
+        to_fp16=False,
         fp32_op_list=None,
         optimize_by_ort=True,
         optimize_by_fusion=True,
@@ -608,7 +608,7 @@ class CLIP(BaseModel):
         self,
         input_onnx_path,
         optimized_onnx_path,
-        to_fp16=True,
+        to_fp16=False,
         fp32_op_list=None,
         optimize_by_ort=True,
         optimize_by_fusion=True,
@@ -832,7 +832,7 @@ class UNet(BaseModel):
         self.controlnet = pipeline_info.controlnet_name()
 
     def load_model(self, framework_model_dir, subfolder="unet"):
-        options = {"variant": "fp16", "torch_dtype": torch.float16}
+        options = {}
 
         model = self.from_pretrained(UNet2DConditionModel, framework_model_dir, subfolder, **options)
 
@@ -986,7 +986,7 @@ class UNetXL(BaseModel):
         self.custom_unet = pipeline_info.custom_unet()
         self.controlnet = pipeline_info.controlnet_name()
 
-    def load_model(self, framework_model_dir, subfolder="unet", always_download_fp16=True):
+    def load_model(self, framework_model_dir, subfolder="unet", always_download_fp16=False):
         options = {"variant": "fp16", "torch_dtype": torch.float16} if self.fp16 or always_download_fp16 else {}
 
         if self.custom_unet:

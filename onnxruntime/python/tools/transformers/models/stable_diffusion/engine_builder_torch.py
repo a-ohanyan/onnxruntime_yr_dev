@@ -15,7 +15,7 @@ class TorchEngineBuilder(EngineBuilder):
         self,
         pipeline_info: PipelineInfo,
         max_batch_size=16,
-        device="cuda",
+        device="cpu",
         use_cuda_graph=False,
     ):
         """
@@ -55,7 +55,7 @@ class TorchEngineBuilder(EngineBuilder):
     ):
         import torch
 
-        self.torch_device = torch.device("cuda", torch.cuda.current_device())
+        self.torch_device = torch.device("cpu")
         self.load_models(framework_model_dir)
 
         pipe = self.load_pipeline_with_lora() if self.pipeline_info.lora_weights else None
@@ -68,7 +68,7 @@ class TorchEngineBuilder(EngineBuilder):
             else:
                 model = model.to(device=self.torch_device, dtype=torch.float16)
 
-            if model_name in self.compile_config:
+            if False:#model_name in self.compile_config:
                 compile_config = self.compile_config[model_name]
                 if model_name in ["unet", "unetxl"]:
                     model.to(memory_format=torch.channels_last)

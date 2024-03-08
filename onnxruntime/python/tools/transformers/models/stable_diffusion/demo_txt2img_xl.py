@@ -21,7 +21,7 @@
 # --------------------------------------------------------------------------
 
 import coloredlogs
-from cuda import cudart
+#from cuda import cudart
 from demo_utils import (
     add_controlnet_arguments,
     arg_parser,
@@ -124,6 +124,7 @@ def run_demo(args):
     controlnet_image, controlnet_scale = process_controlnet_arguments(args)
     prompt, negative_prompt = repeat_prompt(args)
     batch_size = len(prompt)
+    print(args.engine)
     base, refiner = load_pipelines(args, batch_size)
     run_pipelines(args, base, refiner, prompt, negative_prompt, controlnet_image, controlnet_scale)
     base.teardown()
@@ -215,7 +216,7 @@ def run_dynamic_shape_demo(args):
 
 def run_turbo_demo(args):
     """Run demo of generating images with test prompts with ORT CUDA provider."""
-    args.engine = "ORT_CUDA"
+    args.engine = "TORCH"
     args.disable_cuda_graph = True
     base, refiner = load_pipelines(args, 1)
 
@@ -247,6 +248,8 @@ if __name__ == "__main__":
     args = parse_arguments(is_xl=True, parser=parser)
 
     no_prompt = isinstance(args.prompt, list) and len(args.prompt) == 1 and not args.prompt[0]
+    print(args.prompt)
+    print(args.prompt[0])
     if no_prompt:
         if args.version == "xl-turbo":
             run_turbo_demo(args)

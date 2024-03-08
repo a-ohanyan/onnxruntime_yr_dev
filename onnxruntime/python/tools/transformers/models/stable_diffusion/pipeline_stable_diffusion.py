@@ -27,15 +27,15 @@ import time
 from typing import Any, Dict, List, Optional
 
 import numpy as np
-import nvtx
+#import nvtx
 import torch
-from cuda import cudart
+#from cuda import cudart
 from diffusion_models import PipelineInfo, get_tokenizer
 from diffusion_schedulers import DDIMScheduler, EulerAncestralDiscreteScheduler, LCMScheduler, UniPCMultistepScheduler
 from engine_builder import EngineType
-from engine_builder_ort_cuda import OrtCudaEngineBuilder
-from engine_builder_ort_trt import OrtTensorrtEngineBuilder
-from engine_builder_tensorrt import TensorrtEngineBuilder
+#from engine_builder_ort_cuda import OrtCudaEngineBuilder
+#from engine_builder_ort_trt import OrtTensorrtEngineBuilder
+#from engine_builder_tensorrt import TensorrtEngineBuilder
 from engine_builder_torch import TorchEngineBuilder
 from PIL import Image
 
@@ -50,13 +50,13 @@ class StableDiffusionPipeline:
         pipeline_info: PipelineInfo,
         max_batch_size=16,
         scheduler="DDIM",
-        device="cuda",
+        device="cpu",
         output_dir=".",
         verbose=False,
         nvtx_profile=False,
         use_cuda_graph=False,
         framework_model_dir="pytorch_model",
-        engine_type: EngineType = EngineType.ORT_CUDA,
+        engine_type: EngineType = EngineType.TORCH,
     ):
         """
         Initializes the Diffusion pipeline.
@@ -99,7 +99,7 @@ class StableDiffusionPipeline:
                 pathlib.Path(directory).mkdir(parents=True)
 
         self.device = device
-        self.torch_device = torch.device(device, torch.cuda.current_device())
+        self.torch_device = torch.device(device)
         self.verbose = verbose
         self.nvtx_profile = nvtx_profile
 
@@ -108,7 +108,7 @@ class StableDiffusionPipeline:
         self.tokenizer = None
         self.tokenizer2 = None
 
-        self.generator = torch.Generator(device="cuda")
+        self.generator = torch.Generator(device="cpu")
         self.actual_steps = None
 
         self.current_scheduler = None
@@ -144,9 +144,9 @@ class StableDiffusionPipeline:
 
         # Create CUDA events
         self.events = {}
-        for stage in ["clip", "denoise", "vae", "vae_encoder", "pil"]:
-            for marker in ["start", "stop"]:
-                self.events[stage + "-" + marker] = cudart.cudaEventCreate()[1]
+        # for stage in ["clip", "denoise", "vae", "vae_encoder", "pil"]:
+        #     for marker in ["start", "stop"]:
+        #         self.events[stage + "-" + marker] = cudart.cudaEventCreate()[1]
         self.markers = {}
 
     def is_backend_tensorrt(self):
@@ -602,7 +602,7 @@ class StableDiffusionPipeline:
 
         timesteps = None
         step_offset = 0
-        with torch.inference_mode(), torch.autocast("cuda"):
+        with torch.inference_mode():
             if image is not None:
                 timesteps, step_offset, latents = self.initialize_refiner(
                     batch_size=batch_size,

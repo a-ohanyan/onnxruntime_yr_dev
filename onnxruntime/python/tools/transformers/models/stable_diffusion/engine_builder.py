@@ -33,7 +33,7 @@ class EngineBuilder:
         self,
         engine_type: EngineType,
         pipeline_info: PipelineInfo,
-        device="cuda",
+        device="cpu",
         max_batch_size=16,
         use_cuda_graph=False,
     ):
@@ -55,7 +55,7 @@ class EngineBuilder:
         self.max_batch_size = max_batch_size
         self.use_cuda_graph = use_cuda_graph
         self.device = torch.device(device)
-        self.torch_device = torch.device(device, torch.cuda.current_device())
+        self.torch_device = torch.device(device)
         self.stages = pipeline_info.stages()
 
         self.vae_torch_fallback = self.pipeline_info.vae_torch_fallback() and self.engine_type != EngineType.TORCH

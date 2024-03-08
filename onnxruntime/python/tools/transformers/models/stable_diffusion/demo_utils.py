@@ -25,11 +25,11 @@ import sys
 from importlib.metadata import PackageNotFoundError, version
 from typing import Any, Dict, List
 
-import controlnet_aux
+#import controlnet_aux
 import cv2
 import numpy as np
 import torch
-from cuda import cudart
+#from cuda import cudart
 from diffusion_models import PipelineInfo
 from engine_builder import EngineType, get_engine_paths, get_engine_type
 from PIL import Image
@@ -74,7 +74,7 @@ def parse_arguments(is_xl: bool, parser):
         "-e",
         "--engine",
         type=str,
-        default=engines[0],
+        default=engines[3],
         choices=engines,
         help="Backend engine in {engines}. "
         "ORT_CUDA is CUDA execution provider; ORT_TRT is Tensorrt execution provider; TRT is TensorRT",
@@ -357,8 +357,8 @@ def get_metadata(args, is_xl: bool = False) -> Dict[str, Any]:
         except PackageNotFoundError:
             continue
     metadata["packages"] = packages
-    metadata["device"] = torch.cuda.get_device_name()
-    metadata["torch.version.cuda"] = torch.version.cuda
+    metadata["device"] = torch.cpu.get_device_name()
+    #metadata["torch.version.cuda"] = torch.version.cuda
 
     return metadata
 
@@ -385,7 +385,7 @@ def initialize_pipeline(
     version="xl-turbo",
     is_refiner: bool = False,
     is_inpaint: bool = False,
-    engine_type=EngineType.ORT_CUDA,
+    engine_type=EngineType.TORCH,
     work_dir: str = ".",
     engine_dir=None,
     onnx_opset: int = 17,
@@ -393,7 +393,7 @@ def initialize_pipeline(
     height=512,
     width=512,
     nvtx_profile=False,
-    use_cuda_graph=True,
+    use_cuda_graph=False,
     build_dynamic_batch=False,
     build_dynamic_shape=False,
     min_image_size: int = 512,
@@ -406,7 +406,7 @@ def initialize_pipeline(
     controlnet=None,
     lora_weights=None,
     lora_scale=1.0,
-    use_fp16_vae=True,
+    use_fp16_vae=False,
     use_vae=True,
     framework_model_dir=None,
 ):
@@ -534,7 +534,8 @@ def load_pipelines(args, batch_size=None):
         # This range can cover common used shape of landscape 512x768, portrait 768x512, or square 512x512 and 768x768.
         min_image_size = 512 if args.engine != "ORT_CUDA" else 256
         max_image_size = 768 if args.engine != "ORT_CUDA" else 1024
-
+    print(args.engine)
+    print(engine_type)
     params = {
         "version": args.version,
         "is_refiner": False,
@@ -559,7 +560,7 @@ def load_pipelines(args, batch_size=None):
         "controlnet": args.controlnet_type,
         "lora_weights": args.lora_weights,
         "lora_scale": args.lora_scale,
-        "use_fp16_vae": "xl" in args.version,
+        "use_fp16_vae": False,#"xl" in args.version,
         "use_vae": True,
         "framework_model_dir": args.framework_model_dir,
     }
@@ -579,7 +580,7 @@ def load_pipelines(args, batch_size=None):
         params["controlnet"] = None
         params["lora_weights"] = None
         params["use_vae"] = True
-        params["use_fp16_vae"] = True
+        params["use_fp16_vae"] = False
         refiner = initialize_pipeline(**params)
 
     if engine_type == EngineType.TRT:
