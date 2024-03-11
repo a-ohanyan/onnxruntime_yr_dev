@@ -561,9 +561,9 @@ if(onnxruntime_USE_DML)
   list(APPEND onnxruntime_test_providers_dependencies onnxruntime_providers_dml)
 endif()
 
-if(onnxruntime_USE_RYZENAI)
-  list(APPEND onnxruntime_test_providers_dependencies onnxruntime_providers_ryzenai)
-endif()
+# if(onnxruntime_USE_RYZENAI)
+#   list(APPEND onnxruntime_test_providers_dependencies onnxruntime_providers_ryzenai)
+# endif()
 
 
 if(onnxruntime_USE_DNNL)

@@ -34,6 +34,7 @@ namespace test {
 
 // unique_ptr providers with default values for session registration
 std::unique_ptr<IExecutionProvider> DefaultCpuExecutionProvider(bool enable_arena = true);
+std::unique_ptr<IExecutionProvider> DefaultRyzenAIExecutionProvider(bool enable_arena = false);
 std::unique_ptr<IExecutionProvider> DefaultCudaExecutionProvider();
 #ifdef ENABLE_CUDA_NHWC_OPS
 std::unique_ptr<IExecutionProvider> DefaultCudaNHWCExecutionProvider();

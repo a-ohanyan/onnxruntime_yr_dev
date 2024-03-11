@@ -2024,6 +2024,7 @@ def run_onnxruntime_tests(args, source_dir, ctest_path, build_dir, configs):
                 executables.append("onnxruntime_global_thread_pools_test")
                 executables.append("onnxruntime_customopregistration_test")
             for exe in executables:
+                breakpoint()
                 test_output = f"--gtest_output=xml:{cwd}/{exe}.{config}.results.xml"
                 run_subprocess([os.path.join(cwd, exe), test_output], cwd=cwd, dll_path=dll_path)
         else:
@@ -2813,6 +2814,7 @@ def main():
 
     if args.test:
         if args.enable_onnx_tests:
+            breakpoint()
             source_onnx_model_dir = "C:\\local\\models" if is_windows() else "/data/models"
             setup_test_data(source_onnx_model_dir, "models", build_dir, configs)
 
@@ -2917,6 +2919,7 @@ def main():
 
 if __name__ == "__main__":
     try:
+        import pdb; pdb.set_trace()
         sys.exit(main())
     except BaseError as e:
         log.error(str(e))

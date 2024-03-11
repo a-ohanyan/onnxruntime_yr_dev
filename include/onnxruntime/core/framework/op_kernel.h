@@ -244,6 +244,9 @@ using BuildKernelCreateInfoFn = KernelCreateInfo (*)();
 #define ONNX_CPU_OPERATOR_VERSIONED_KERNEL(name, startver, endver, builder, ...) \
   ONNX_OPERATOR_VERSIONED_KERNEL_EX(name, kOnnxDomain, startver, endver, kCpuExecutionProvider, builder, __VA_ARGS__)
 
+#define ONNX_RYZENAI_OPERATOR_VERSIONED_KERNEL(name, startver, endver, builder, ...) \
+  ONNX_OPERATOR_VERSIONED_KERNEL_EX(name, kOnnxDomain, startver, endver, kRyzenAIExecutionProvider, builder, __VA_ARGS__)
+
 #define ONNX_CPU_OPERATOR_VERSIONED_ML_KERNEL(name, startver, endver, builder, ...) \
   ONNX_OPERATOR_VERSIONED_KERNEL_EX(name, kMLDomain, startver, endver, kCpuExecutionProvider, builder, __VA_ARGS__)
 

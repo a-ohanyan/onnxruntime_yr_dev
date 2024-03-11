@@ -5,11 +5,11 @@
 
 namespace onnxruntime {
 
-
+namespace ryzenai{
 template <typename T>
-class GeMM : public OpKernel {
+class MatMul : public OpKernel {
  public:
-  GeMM(const OpKernelInfo& info) : OpKernel(info) {}
+  MatMul(const OpKernelInfo& info) : OpKernel(info) {}
 
   Status Compute(OpKernelContext* context) const;
 
@@ -17,6 +17,6 @@ class GeMM : public OpKernel {
  TensorShape b_shape_;
  IAllocatorUniquePtr<void> packed_b_;
 };
-
+}
 
 } // namespace onnxruntime

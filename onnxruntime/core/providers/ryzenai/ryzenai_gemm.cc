@@ -1,15 +1,17 @@
 #include "ryzenai_gemm.h"
 namespace onnxruntime {
 
+
 ONNX_RYZENAI_OPERATOR_TYPED_KERNEL(
-    GeMM,
-    1,
+    MatMul,
+    20,
     float,
     KernelDefBuilder().TypeConstraint("T", DataTypeImpl::GetTensorType<float>()),
-    GeMM<float>);
+    ryzenai::MatMul<float>);
+namespace ryzenai{
 
 template <typename T>
-Status GeMM<T>::Compute(OpKernelContext* context) const {
+Status MatMul<T>::Compute(OpKernelContext* context) const {
   // Access input tensors
   const auto* A = context->Input<Tensor>(0);
   const auto* B = context->Input<Tensor>(1);
@@ -50,4 +52,5 @@ Status GeMM<T>::Compute(OpKernelContext* context) const {
 
   return onnxruntime::Status::OK();
 }
+  }
 } // namespace MyCustomExecutionProvider

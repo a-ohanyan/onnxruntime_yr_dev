@@ -165,6 +165,7 @@ int real_main(int argc, char* argv[], Ort::Env& env) {
   bool enable_coreml = false;
   bool enable_snpe = false;
   bool enable_dml = false;
+  bool enable_ryzenai = false;
   bool enable_acl = false;
   bool enable_armnn = false;
   bool enable_rocm = false;
@@ -257,7 +258,9 @@ int real_main(int argc, char* argv[], Ort::Env& env) {
             enable_migraphx = true;
           } else if (!CompareCString(optarg, ORT_TSTR("xnnpack"))) {
             enable_xnnpack = true;
-          } else {
+          } else if (!CompareCString(optarg, ORT_TSTR("ryzenai"))) {
+            enable_ryzenai = true;
+          }else {
             usage();
             return -1;
           }

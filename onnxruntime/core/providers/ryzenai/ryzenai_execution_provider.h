@@ -3,6 +3,7 @@
 #include "core/framework/execution_provider.h"
 #include "core/graph/constants.h"
 namespace onnxruntime {
+
 // Information needed to construct RyzenAI execution providers.
 struct RyzenAIExecutionProviderInfo {
   bool create_arena{true};
