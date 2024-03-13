@@ -143,6 +143,12 @@ ORT_API_STATUS_IMPL(OrtApis::SessionOptionsAppendExecutionProvider,
 #else
     status = create_not_supported_status();
 #endif
+  } else if (strcmp(provider_name, "RYZENAI") == 0) {
+#if defined(USE_RYZENAI)
+    options->provider_factories.push_back(RyzenAIProviderFactoryCreator::Create(provider_options));
+#else
+    status = create_not_supported_status();
+#endif
   } else if (strcmp(provider_name, "JS") == 0) {
 #if defined(USE_JSEP)
     std::string preferred_layout;

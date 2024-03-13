@@ -14,6 +14,7 @@
 #include "core/session/onnxruntime_cxx_api.h"
 #include "core/framework/session_options.h"
 
+
 namespace onnxruntime {
 
 namespace test {
@@ -22,8 +23,8 @@ std::unique_ptr<IExecutionProvider> DefaultCpuExecutionProvider(bool enable_aren
   return CPUProviderFactoryCreator::Create(enable_arena)->CreateProvider();
 }
 
-std::unique_ptr<IExecutionProvider> DefaultRyzenAIExecutionProvider(bool enable_arena) {
-  return RyzenAIProviderFactoryCreator::Create(enable_arena)->CreateProvider();
+std::unique_ptr<IExecutionProvider> DefaultRyzenAIExecutionProvider() {
+  return RyzenAIProviderFactoryCreator::Create({})->CreateProvider();
 }
 
 std::unique_ptr<IExecutionProvider> DefaultTensorrtExecutionProvider() {

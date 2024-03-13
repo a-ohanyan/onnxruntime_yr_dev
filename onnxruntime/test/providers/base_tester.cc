@@ -634,6 +634,7 @@ void BaseTester::RunWithConfig(size_t* number_of_pre_packed_weights_counter,
           kQnnExecutionProvider,
           kSnpeExecutionProvider,
           kXnnpackExecutionProvider,
+          kRyzenAIExecutionProvider
       };
 #endif
 
@@ -676,6 +677,8 @@ void BaseTester::RunWithConfig(size_t* number_of_pre_packed_weights_counter,
           execution_provider = DefaultXnnpackExecutionProvider();
         else if (provider_type == onnxruntime::kDmlExecutionProvider)
           execution_provider = DefaultDmlExecutionProvider();
+        else if (provider_type == onnxruntime::kRyzenAIExecutionProvider)
+          execution_provider = DefaultRyzenAIExecutionProvider();
 
         // skip if execution provider is disabled
         if (execution_provider == nullptr)

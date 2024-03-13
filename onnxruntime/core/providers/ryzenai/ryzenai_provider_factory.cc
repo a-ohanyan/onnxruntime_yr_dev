@@ -18,17 +18,17 @@ struct RyzenAIProviderFactory : IExecutionProviderFactory {
 
 std::unique_ptr<IExecutionProvider> RyzenAIProviderFactory::CreateProvider() {
   RyzenAIExecutionProviderInfo info;
-  info.create_arena = create_arena_;
+  info.create_arena = false;
   return std::make_unique<RyzenAIExecutionProvider>(info);
 }
 
-std::shared_ptr<IExecutionProviderFactory> RyzenAIProviderFactoryCreator::Create(int use_arena) {
-  return std::make_shared<onnxruntime::RyzenAIProviderFactory>(use_arena != 0);
+std::shared_ptr<IExecutionProviderFactory> RyzenAIProviderFactoryCreator::Create(const ProviderOptions& provider_options) {
+  return std::make_shared<onnxruntime::RyzenAIProviderFactory>(false);
 }
 
 }  // namespace onnxruntime
 
 ORT_API_STATUS_IMPL(OrtSessionOptionsAppendExecutionProvider_RyzenAI, _In_ OrtSessionOptions* options, int use_arena) {
-  options->provider_factories.push_back(onnxruntime::RyzenAIProviderFactoryCreator::Create(use_arena));
+  options->provider_factories.push_back(onnxruntime::RyzenAIProviderFactoryCreator::Create({}));
   return nullptr;
 }
