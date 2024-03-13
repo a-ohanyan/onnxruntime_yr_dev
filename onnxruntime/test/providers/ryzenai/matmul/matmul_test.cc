@@ -26,10 +26,10 @@ namespace onnxruntime {
 namespace test {
 
 TEST(MatmulFloatRyzenTest, MatMulRyzen) {
-  OpTester test("MatMul", 20);
-  test.AddInput<float>("T1", {4, 3}, {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0});
-  test.AddInput<float>("T2", {3, 2}, {1.0, 1.0, 1.0, 1.0, 1.0, 1.0});
-  test.AddOutput<float>("T3", {4, 2}, {3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0});
+//   OpTester test("MatMul", 20);
+//   test.AddInput<float>("T1", {4, 3}, {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0});
+//   test.AddInput<float>("T2", {3, 2}, {1.0, 1.0, 1.0, 1.0, 1.0, 1.0});
+//   test.AddOutput<float>("T3", {4, 2}, {3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0});
 
 //   // use ryzen EP
 //   auto ryzen_ep = []() -> std::vector<std::unique_ptr<IExecutionProvider>> {
@@ -42,7 +42,7 @@ TEST(MatmulFloatRyzenTest, MatMulRyzen) {
   // no real options currently but set a value to make sure it's passed through. requires manual validation.
   options["one"] = "two";
   so.AppendExecutionProvider("RYZENAI", options);
-  const ORTCHAR_T* ort_model_path = ORT_MODEL_FOLDER "matmul_1.onnx";
+  const ORTCHAR_T* ort_model_path = ORT_TSTR("C:\\Users\\yraparti\\onnxrt_work\\onnxruntime\\build\\Windows\\Debug\\Debug\\testdata\\matmul_1.onnx");
   Ort::Session session(*ort_env, ort_model_path, so);
 
     // dirty hack to access the underlying InferenceSession but don't know a better way.

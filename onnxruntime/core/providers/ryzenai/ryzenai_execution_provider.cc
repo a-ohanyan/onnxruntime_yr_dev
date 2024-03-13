@@ -27,6 +27,7 @@ std::vector<AllocatorPtr> RyzenAIExecutionProvider::CreatePreferredAllocators() 
 
 
 class ONNX_OPERATOR_TYPED_KERNEL_CLASS_NAME(kRyzenAIExecutionProvider, kOnnxDomain, 20, float, MatMul);
+class ONNX_OPERATOR_TYPED_KERNEL_CLASS_NAME(kRyzenAIExecutionProvider, kOnnxDomain, 20, int, MatMul);
 
 // !!PLEASE READ BELOW!! Following that, add new entries above this comment
 
@@ -71,7 +72,9 @@ Status RegisterRyzenAIKernels(KernelRegistry& kernel_registry) {
   static const BuildKernelCreateInfoFn function_table[] = {
     BuildKernelCreateInfo<void>,  // default entry to avoid the list become empty after ops-reducing
     BuildKernelCreateInfo<ONNX_OPERATOR_TYPED_KERNEL_CLASS_NAME(kRyzenAIExecutionProvider, kOnnxDomain, 20,
-                                                                          float, MatMul)>
+                                                                          float, MatMul)>,
+    BuildKernelCreateInfo<ONNX_OPERATOR_TYPED_KERNEL_CLASS_NAME(kRyzenAIExecutionProvider, kOnnxDomain, 20,
+                                                                          int, MatMul)>
   };
 
   for (auto& function_table_entry : function_table) {
