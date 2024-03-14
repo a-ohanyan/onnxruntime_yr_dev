@@ -23,6 +23,8 @@ Status MatMul<T>::Compute(OpKernelContext* context) const {
   const auto* A = context->Input<Tensor>(0);
   const auto* B = context->Input<Tensor>(1);
 
+  std::cout << "In RyzenAI MatMul .. " << std::endl;
+
   // Validate input shapes (assuming 2D matrices for simplicity)
   if (A->Shape().NumDimensions() != 2 || B->Shape().NumDimensions() != 2) {
     return ORT_MAKE_STATUS(ONNXRUNTIME, INVALID_ARGUMENT,

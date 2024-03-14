@@ -2919,7 +2919,7 @@ def main():
 
 if __name__ == "__main__":
     try:
-        import pdb; pdb.set_trace()
+        #import pdb; pdb.set_trace()
         sys.exit(main())
     except BaseError as e:
         log.error(str(e))

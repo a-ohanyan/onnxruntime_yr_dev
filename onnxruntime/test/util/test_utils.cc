@@ -133,7 +133,7 @@ void RunWithEP(ModelPathOrBytes model_path_or_bytes, std::string_view log_id,
                                std::unique_ptr<IExecutionProvider> execution_provider,
                                const NameMLValMap& feeds,
                                const EPVerificationParams& params,
-			       InferenceSessionWrapper& session_object) {
+			       InferenceSessionWrapper& session_object_temp) {
 
   std::vector<std::byte> model_data_buffer{};
   const auto model_data = GetModelBytes(model_path_or_bytes, model_data_buffer);
@@ -143,11 +143,20 @@ void RunWithEP(ModelPathOrBytes model_path_or_bytes, std::string_view log_id,
   RunOptions run_options;
   run_options.run_tag = so.session_logid;
 
-  //InferenceSessionWrapper session_object{so, GetEnvironment()};
+  InferenceSessionWrapper session_object{so, GetEnvironment()};
 
- // ASSERT_STATUS_OK(session_object.RegisterExecutionProvider(std::move(execution_provider)));
+  ASSERT_STATUS_OK(session_object.RegisterExecutionProvider(std::move(execution_provider)));
   ASSERT_STATUS_OK(session_object.Load(model_data.data(), static_cast<int>(model_data.size())));
   ASSERT_STATUS_OK(session_object.Initialize());
+    bool have_ryzenai_ep = false;
+
+    for (const auto& provider : session_object.GetRegisteredProviderTypes()) {
+      if (provider == kRyzenAIExecutionProvider) {
+        have_ryzenai_ep = true;
+        break;
+      }
+    }
+    std::cout << "Checking that ryzenai EP was found in registered providers for session: status : " << have_ryzenai_ep << std::endl;
 
   const auto& graph = session_object.GetGraph();
   const auto& outputs = graph.GetOutputs();
@@ -158,12 +167,16 @@ void RunWithEP(ModelPathOrBytes model_path_or_bytes, std::string_view log_id,
   for (const auto* node_arg : outputs) {
     if (node_arg->Exists()) {
       output_names.push_back(node_arg->Name());
+      std::cout << "Out name = " << node_arg->Name() << std::endl;
     }
   }
 
   // Run with EP and verify the result
   std::vector<OrtValue> fetches;
   ASSERT_STATUS_OK(session_object.Run(run_options, feeds, output_names, &fetches));
+
+  auto& tensor = fetches[0].Get<Tensor>();
+  std::cout << "Fetches : size = " << fetches.size() << "Fetches data 3x1 = [" << tensor.DataAsSpan<float>()[0] << " , "<< tensor.DataAsSpan<float>()[1] << " ,"<<tensor.DataAsSpan<float>()[2] << "]" << std::endl;  
   //if (verify_outputs) {
     //VerifyOutputs(output_names, expected_fetches, fetches, params);
   //}

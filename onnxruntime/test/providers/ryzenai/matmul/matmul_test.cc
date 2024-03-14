@@ -73,7 +73,7 @@ TEST(MatmulFloatRyzenTest, MatMulRyzen) {
     ASSERT_TRUE(have_ryzenai_ep) << "ryzenai EP was not found in registered providers for session.";
 
     TensorShape input_shape_x{3, 2};
-    std::vector<float> input_x = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+    std::vector<float> input_x = {7.0, 7.0, 7.0, 7.0, 7.0, 7.0};
 
     OrtValue ml_value_x;
     CreateMLValue<float>(input_shape_x.GetDims(), input_x.data(), OrtMemoryInfo(), &ml_value_x);

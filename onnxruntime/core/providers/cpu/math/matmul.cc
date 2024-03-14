@@ -214,6 +214,7 @@ Status MatMul<float>::UseSharedPrePackedBuffers(std::vector<BufferUniquePtr>& pr
 Status MatMul<float>::Compute(OpKernelContext* ctx) const {
   concurrency::ThreadPool* thread_pool = ctx->GetOperatorThreadPool();
 
+  std::cout << "In CPU MatMul .. " << std::endl;
   const Tensor* a = ctx->Input<Tensor>(0);
   const Tensor* b = packed_b_ ? nullptr : ctx->Input<Tensor>(1);
   const auto& b_shape = b ? b->Shape() : b_shape_;
