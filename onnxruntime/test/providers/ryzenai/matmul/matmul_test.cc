@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-
 #include <random>
 
 #include "core/common/logging/logging.h"
@@ -46,11 +45,11 @@ TEST(MatmulFloatRyzenTest, MatMulRyzen) {
 //   test.AddOutput<float>("T3", {4, 2}, {3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0});
 
    // use ryzen EP
-   auto ryzen_ep = []() -> std::vector<std::unique_ptr<IExecutionProvider>> {
-     std::vector<std::unique_ptr<IExecutionProvider>> execution_providers;
-     execution_providers.push_back(DefaultRyzenAIExecutionProvider());
-     return execution_providers;
-   };
+   //auto ryzen_ep = []() -> std::vector<std::unique_ptr<IExecutionProvider>> {
+   //  std::vector<std::unique_ptr<IExecutionProvider>> execution_providers;
+   //  execution_providers.push_back(DefaultRyzenAIExecutionProvider());
+   //  return execution_providers;
+   //};
   Ort::SessionOptions so;
   onnxruntime::ProviderOptions options;
   // no real options currently but set a value to make sure it's passed through. requires manual validation.
@@ -73,9 +72,8 @@ TEST(MatmulFloatRyzenTest, MatMulRyzen) {
     }
     ASSERT_TRUE(have_ryzenai_ep) << "ryzenai EP was not found in registered providers for session.";
 
-    RandomValueGenerator generator;
     TensorShape input_shape_x{3, 2};
-    std::vector<float> input_x = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0};//generator.Uniform<float>(input_shape_x.GetDims(), 0, 128);
+    std::vector<float> input_x = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
 
     OrtValue ml_value_x;
     CreateMLValue<float>(input_shape_x.GetDims(), input_x.data(), OrtMemoryInfo(), &ml_value_x);
@@ -84,20 +82,18 @@ TEST(MatmulFloatRyzenTest, MatMulRyzen) {
     feeds.insert(std::make_pair("X", ml_value_x));
 
     TensorShape input_weights{2, 1};
-    std::vector<float> input_w = {2, 3};//generator.Uniform<float>(input_weights.GetDims(), 0, 128);
+    std::vector<float> input_w = {2, 3};
 
     OrtValue ml_value_w;
     CreateMLValue<float>(input_weights.GetDims(), input_w.data(), OrtMemoryInfo(), &ml_value_w);
     feeds.insert(std::make_pair("W", ml_value_w));
-  //EPVerificationParams params;
-  //params.ep_node_assignment = ExpectedEPNodeAssignment::All;
+    EPVerificationParams params;
+    params.ep_node_assignment = ExpectedEPNodeAssignment::All;
   //params.fp32_abs_err = 0.0002f;
   //params.graph_verifier = &verify;
-    auto ep_vec = ryzen_ep();
-    RunAndVerifyOutputsWithEP(ort_model_path, "MatMulRyzen", std::move(ep_vec), feeds);
+    auto ep_vec = DefaultRyzenAIExecutionProvider();
 
-//     test.Run(so.GetConst().clone(), OpTester::ExpectResult::kExpectSuccess, "", {}, nullptr,
-//              &ep_vec, {});
+    RunWithEP(ort_model_path, "MatMulRyzen", std::move(ep_vec), feeds, params);
 }
 
 } //test

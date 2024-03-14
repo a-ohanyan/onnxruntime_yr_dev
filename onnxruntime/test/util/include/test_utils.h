@@ -61,6 +61,12 @@ void VerifyEPNodeAssignment(const Graph& graph, const std::string& provider_type
 using ModelPathOrBytes = std::variant<std::basic_string_view<ORTCHAR_T>,
                                       gsl::span<const std::byte>>;
 
+// Run the model using the RyzenAI EP
+void RunWithEP(ModelPathOrBytes model_path_or_bytes, std::string_view log_id,
+                               std::unique_ptr<IExecutionProvider> execution_provider,
+                               const NameMLValMap& feeds,
+                               const EPVerificationParams& params);
+
 // Run the model using the CPU EP to get expected output, comparing to the output when the 'execution_provider'
 // is enabled.
 // session_options_updater can be used to update the SessionOptions the inference session is created with.

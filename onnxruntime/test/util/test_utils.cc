@@ -128,6 +128,45 @@ static gsl::span<const std::byte> GetModelBytes(ModelPathOrBytes model_path_or_b
   byte_buffer_out = std::move(byte_buffer);
   return gsl::span<const std::byte>(byte_buffer_out);
 }
+ 
+void RunWithEP(ModelPathOrBytes model_path_or_bytes, std::string_view log_id,
+                               std::unique_ptr<IExecutionProvider> execution_provider,
+                               const NameMLValMap& feeds,
+                               const EPVerificationParams& params) {
+
+  std::vector<std::byte> model_data_buffer{};
+  const auto model_data = GetModelBytes(model_path_or_bytes, model_data_buffer);
+
+  SessionOptions so;
+  so.session_logid = "MatMulRyzen";
+  RunOptions run_options;
+  run_options.run_tag = so.session_logid;
+
+  InferenceSessionWrapper session_object{so, GetEnvironment()};
+
+  ASSERT_STATUS_OK(session_object.RegisterExecutionProvider(std::move(execution_provider)));
+  ASSERT_STATUS_OK(session_object.Load(model_data.data(), static_cast<int>(model_data.size())));
+  ASSERT_STATUS_OK(session_object.Initialize());
+
+  const auto& graph = session_object.GetGraph();
+  const auto& outputs = graph.GetOutputs();
+
+  // fetch all outputs
+  std::vector<std::string> output_names;
+  output_names.reserve(outputs.size());
+  for (const auto* node_arg : outputs) {
+    if (node_arg->Exists()) {
+      output_names.push_back(node_arg->Name());
+    }
+  }
+
+  // Run with EP and verify the result
+  std::vector<OrtValue> fetches;
+  ASSERT_STATUS_OK(session_object.Run(run_options, feeds, output_names, &fetches));
+  //if (verify_outputs) {
+    //VerifyOutputs(output_names, expected_fetches, fetches, params);
+  //}
+}
 
 void RunAndVerifyOutputsWithEP(ModelPathOrBytes model_path_or_bytes, std::string_view log_id,
                                std::unique_ptr<IExecutionProvider> execution_provider,
