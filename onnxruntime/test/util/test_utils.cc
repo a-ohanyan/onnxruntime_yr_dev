@@ -132,7 +132,8 @@ static gsl::span<const std::byte> GetModelBytes(ModelPathOrBytes model_path_or_b
 void RunWithEP(ModelPathOrBytes model_path_or_bytes, std::string_view log_id,
                                std::unique_ptr<IExecutionProvider> execution_provider,
                                const NameMLValMap& feeds,
-                               const EPVerificationParams& params) {
+                               const EPVerificationParams& params,
+			       InferenceSessionWrapper& session_object) {
 
   std::vector<std::byte> model_data_buffer{};
   const auto model_data = GetModelBytes(model_path_or_bytes, model_data_buffer);
@@ -142,9 +143,9 @@ void RunWithEP(ModelPathOrBytes model_path_or_bytes, std::string_view log_id,
   RunOptions run_options;
   run_options.run_tag = so.session_logid;
 
-  InferenceSessionWrapper session_object{so, GetEnvironment()};
+  //InferenceSessionWrapper session_object{so, GetEnvironment()};
 
-  ASSERT_STATUS_OK(session_object.RegisterExecutionProvider(std::move(execution_provider)));
+ // ASSERT_STATUS_OK(session_object.RegisterExecutionProvider(std::move(execution_provider)));
   ASSERT_STATUS_OK(session_object.Load(model_data.data(), static_cast<int>(model_data.size())));
   ASSERT_STATUS_OK(session_object.Initialize());
 

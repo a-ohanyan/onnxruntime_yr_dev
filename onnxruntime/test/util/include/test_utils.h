@@ -65,7 +65,8 @@ using ModelPathOrBytes = std::variant<std::basic_string_view<ORTCHAR_T>,
 void RunWithEP(ModelPathOrBytes model_path_or_bytes, std::string_view log_id,
                                std::unique_ptr<IExecutionProvider> execution_provider,
                                const NameMLValMap& feeds,
-                               const EPVerificationParams& params);
+                               const EPVerificationParams& params,
+			       InferenceSessionWrapper& session_object);
 
 // Run the model using the CPU EP to get expected output, comparing to the output when the 'execution_provider'
 // is enabled.

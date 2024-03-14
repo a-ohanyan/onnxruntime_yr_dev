@@ -59,8 +59,8 @@ TEST(MatmulFloatRyzenTest, MatMulRyzen) {
   Ort::Session session(*ort_env, ort_model_path, so);
 
     // dirty hack to access the underlying InferenceSession but don't know a better way.
-    const OrtSession* ort_session = session;
-    const InferenceSession* s = reinterpret_cast<const InferenceSession*>(ort_session);
+    OrtSession* ort_session = session;
+    InferenceSession* s = reinterpret_cast<InferenceSession*>(ort_session);
 
     bool have_ryzenai_ep = false;
 
@@ -87,7 +87,8 @@ TEST(MatmulFloatRyzenTest, MatMulRyzen) {
   //params.graph_verifier = &verify;
     auto ep_vec = DefaultRyzenAIExecutionProvider();
 
-    RunWithEP(ort_model_path, "MatMulRyzen", std::move(ep_vec), feeds, params);
+    InferenceSessionWrapper* s_wrapper = dynamic_cast<InferenceSessionWrapper*>(s);
+    RunWithEP(ort_model_path, "MatMulRyzen", std::move(ep_vec), feeds, params, *s_wrapper);
 }
 
 } //test
