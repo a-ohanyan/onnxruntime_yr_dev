@@ -81,12 +81,6 @@ TEST(MatmulFloatRyzenTest, MatMulRyzen) {
     NameMLValMap feeds;
     feeds.insert(std::make_pair("X", ml_value_x));
 
-    TensorShape input_weights{2, 1};
-    std::vector<float> input_w = {2, 3};
-
-    OrtValue ml_value_w;
-    CreateMLValue<float>(input_weights.GetDims(), input_w.data(), OrtMemoryInfo(), &ml_value_w);
-    feeds.insert(std::make_pair("W", ml_value_w));
     EPVerificationParams params;
     params.ep_node_assignment = ExpectedEPNodeAssignment::All;
   //params.fp32_abs_err = 0.0002f;
