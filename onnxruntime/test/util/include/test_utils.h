@@ -17,6 +17,7 @@
 #include "core/framework/ort_value.h"
 #include "core/providers/cpu/cpu_execution_provider.h"
 #include "core/session/onnxruntime_c_api.h"
+#include "test/util/include/inference_session_wrapper.h"
 
 namespace onnxruntime {
 class Graph;
