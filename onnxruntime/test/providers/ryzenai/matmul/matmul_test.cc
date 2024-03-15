@@ -39,56 +39,31 @@ namespace onnxruntime {
 namespace test {
 
 TEST(MatmulFloatRyzenTest, MatMulRyzen) {
-//   OpTester test("MatMul", 20);
-//   test.AddInput<float>("T1", {4, 3}, {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0});
-//   test.AddInput<float>("T2", {3, 2}, {1.0, 1.0, 1.0, 1.0, 1.0, 1.0});
-//   test.AddOutput<float>("T3", {4, 2}, {3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0});
+	const ORTCHAR_T* ort_model_path = ORT_TSTR("testdata\\matmul_1_op_version_20.onnx");
+	std::cout << "Begin : Input creation.." << std::endl;
+	Ort::SessionOptions so;
+	Ort::Session session(*ort_env, ort_model_path, so);
+	std::cout << "End  : Session creation.." << std::endl;
+	auto input_shape = session.GetInputTypeInfo(0).GetTensorTypeAndShapeInfo().GetShape();
+	//TBD : input_shape[0] = 1;
 
-   // use ryzen EP
-   //auto ryzen_ep = []() -> std::vector<std::unique_ptr<IExecutionProvider>> {
-   //  std::vector<std::unique_ptr<IExecutionProvider>> execution_providers;
-   //  execution_providers.push_back(DefaultRyzenAIExecutionProvider());
-   //  return execution_providers;
-   //};
-  Ort::SessionOptions so;
-  onnxruntime::ProviderOptions options;
-  // no real options currently but set a value to make sure it's passed through. requires manual validation.
-  options["one"] = "two";
-  so.AppendExecutionProvider("RYZENAI", options);
-  const ORTCHAR_T* ort_model_path = ORT_TSTR("testdata\\matmul_1_op_version_20.onnx");
-  Ort::Session session(*ort_env, ort_model_path, so);
+	TensorShape input_shape_x{input_shape};
+	RandomValueGenerator generator;
+	std::vector<float> input_x = generator.Uniform<float>(input_shape_x.GetDims(),
+			7.0, 7.0);
+	OrtValue ml_value_x;
+	CreateMLValue<float>(input_shape_x.GetDims(), input_x.data(), OrtMemoryInfo(), &ml_value_x);
 
-    // dirty hack to access the underlying InferenceSession but don't know a better way.
-    OrtSession* ort_session = session;
-    InferenceSession* s = reinterpret_cast<InferenceSession*>(ort_session);
+	NameMLValMap feeds;
+	feeds.insert(std::make_pair("X", ml_value_x));
 
-    bool have_ryzenai_ep = false;
+	EPVerificationParams params;
+	params.ep_node_assignment = ExpectedEPNodeAssignment::All;
+	//params.fp32_abs_err = 0.0002f;
+	//params.graph_verifier = &verify;
+	auto ep_vec = DefaultRyzenAIExecutionProvider();
 
-    for (const auto& provider : s->GetRegisteredProviderTypes()) {
-      if (provider == kRyzenAIExecutionProvider) {
-        have_ryzenai_ep = true;
-        break;
-      }
-    }
-    ASSERT_TRUE(have_ryzenai_ep) << "ryzenai EP was not found in registered providers for session.";
-
-    TensorShape input_shape_x{3, 2};
-    std::vector<float> input_x = {7.0, 7.0, 7.0, 7.0, 7.0, 7.0};
-
-    OrtValue ml_value_x;
-    CreateMLValue<float>(input_shape_x.GetDims(), input_x.data(), OrtMemoryInfo(), &ml_value_x);
-
-    NameMLValMap feeds;
-    feeds.insert(std::make_pair("X", ml_value_x));
-
-    EPVerificationParams params;
-    params.ep_node_assignment = ExpectedEPNodeAssignment::All;
-  //params.fp32_abs_err = 0.0002f;
-  //params.graph_verifier = &verify;
-    auto ep_vec = DefaultRyzenAIExecutionProvider();
-
-    InferenceSessionWrapper* s_wrapper = dynamic_cast<InferenceSessionWrapper*>(s);
-    RunWithEP(ort_model_path, "MatMulRyzen", std::move(ep_vec), feeds, params, *s_wrapper);
+	RunWithEP(ort_model_path, "MatMulRyzen", std::move(ep_vec), feeds, params);
 }
 
 } //test
