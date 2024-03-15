@@ -211,71 +211,48 @@ Status MatMul<float>::UseSharedPrePackedBuffers(std::vector<BufferUniquePtr>& pr
   return Status::OK();
 }
 
-Status MatMul<float>::Compute(OpKernelContext* ctx) const {
-  concurrency::ThreadPool* thread_pool = ctx->GetOperatorThreadPool();
+Status MatMul<float>::Compute(OpKernelContext* context) const {
 
-  std::cout << "In CPU MatMul .. " << std::endl;
-  const Tensor* a = ctx->Input<Tensor>(0);
-  const Tensor* b = packed_b_ ? nullptr : ctx->Input<Tensor>(1);
-  const auto& b_shape = b ? b->Shape() : b_shape_;
+  std::cout << "In CPU MatMul : Implementation copied from Ryzenai matmul ... " << std::endl;
+  const Tensor* A = context->Input<Tensor>(0);
+  const Tensor* B = packed_b_ ? nullptr : context->Input<Tensor>(1);
+  const auto& b_shape = B ? B->Shape() : b_shape_;
 
-  // match CUDA kernel implementation, ignore transpose for vectors
-  const bool trans_a = trans_a_attr_ && a->Shape().NumDimensions() != 1;
-  const bool trans_b = trans_b_attr_ && b_shape.NumDimensions() != 1;
-
-  MatMulComputeHelper helper;
-  ORT_RETURN_IF_ERROR(helper.Compute(a->Shape(), b_shape, trans_a, trans_b, trans_batch_a_, trans_batch_b_));
-  Tensor* y = ctx->Output(0, helper.OutputShape());
-
-  // Bail out early if the output is going to be empty
-  if (y->Shape().Size() == 0)
-    return Status::OK();
-
-  const auto* a_data = a->Data<float>();
-  const auto* b_data = b ? b->Data<float>() : nullptr;
-  auto* y_data = y->MutableData<float>();
-
-  const size_t max_len = helper.OutputOffsets().size();
-  const size_t M = static_cast<size_t>(helper.M());
-  const size_t N = static_cast<size_t>(helper.N());
-  const size_t K = static_cast<size_t>(helper.K());
-  const size_t lda = helper.Lda(trans_a);
-  const size_t ldb = helper.Ldb(trans_b);
-#if defined(__aarch64__) && defined(__linux__)
-  if (use_fastmath_mode_ && !trans_b && ((N * K) >= kFastMathModeKernelsizeThreshold)) {
-    std::vector<MLAS_SBGEMM_DATA_PARAMS> data(max_len);
-    for (size_t i = 0; i < max_len; i++) {
-      data[i].BIsfp32 = !(bool(packed_b_));
-      data[i].AIsfp32 = true;
-      data[i].A = a_data + helper.LeftOffsets()[i];
-      data[i].lda = lda;
-      data[i].B = data[i].BIsfp32 ? b_data + helper.RightOffsets()[i] : (float*)packed_b_.get();
-      data[i].ldb = ldb;
-      data[i].C = y_data + helper.OutputOffsets()[i];
-      data[i].ldc = N;
-      data[i].Bias = nullptr;
-      data[i].OutputProcessor = nullptr;
-    }
-    MlasSBGemmBatch(M, N, K, max_len, data.data(), thread_pool);
-  } else
-#endif
-  {
-    std::vector<MLAS_SGEMM_DATA_PARAMS> data(max_len);
-    for (size_t i = 0; i < max_len; i++) {
-      data[i].BIsPacked = bool(packed_b_);
-      data[i].A = a_data + helper.LeftOffsets()[i];
-      data[i].lda = lda;
-      data[i].B = data[i].BIsPacked ? (float*)packed_b_.get() : b_data + helper.RightOffsets()[i];
-      data[i].ldb = ldb;
-      data[i].C = y_data + helper.OutputOffsets()[i];
-      data[i].ldc = N;
-      data[i].alpha = alpha_attr_;
-      data[i].beta = 0.0f;
-    }
-    MlasGemmBatch(trans_a ? CblasTrans : CblasNoTrans, trans_b ? CblasTrans : CblasNoTrans,
-                  M, N, K, data.data(), max_len, thread_pool);
+  // Validate input shapes (assuming 2D matrices for simplicity)
+  if (A->Shape().NumDimensions() != 2 || b_shape.NumDimensions() != 2) {
+    return ORT_MAKE_STATUS(ONNXRUNTIME, INVALID_ARGUMENT,
+                             "Only 2D matrices supported");
   }
-  return Status::OK();
+
+  // Get matrix dimensions
+  auto A_rows = A->Shape()[0];
+  auto A_cols = A->Shape()[1];
+  auto B_rows = b_shape[0];
+  auto B_cols = b_shape[1];
+
+  // Check compatibility for multiplication
+  if (A_cols != B_rows) {
+    return ORT_MAKE_STATUS(ONNXRUNTIME, INVALID_ARGUMENT,
+                             "Inner dimension should match");
+  }
+
+  // Allocate output tensor
+  auto* C = context->Output(0, {A_rows, B_cols});
+  auto a_data = A->Data<float>();
+  const auto b_data = B ? B->Data<float>() : (float*)packed_b_.get();
+  auto c_data = C->MutableData<float>();
+
+  // Perform matrix multiplication (basic implementation for illustration)
+  for (int i = 0; i < A_rows; ++i) {
+    for (int j = 0; j < B_cols; ++j) {
+      float sum = 0;
+      for (int k = 0; k < A_cols; ++k) {
+        sum += a_data[i * A_cols + k] * b_data[k * B_cols + j];
+      }
+      c_data[i * B_cols + j] = sum;
+    }
+  }
+  return onnxruntime::Status::OK();
 }
 
 }  // namespace onnxruntime
