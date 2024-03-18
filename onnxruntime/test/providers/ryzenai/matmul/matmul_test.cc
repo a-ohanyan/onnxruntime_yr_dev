@@ -1,20 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-#include <random>
-
-#include "core/common/logging/logging.h"
-#include "core/common/span_utils.h"
-#include "core/framework/utils.h"
-#include "core/graph/graph.h"
-
-#include "test/common/tensor_op_test_utils.h"
-#include "test/framework/test_utils.h"
-#include "test/test_environment.h"
-#include "test/util/include/asserts.h"
-#include "test/util/include/default_providers.h"
-#include "test/util/include/inference_session_wrapper.h"
-#include "test/util/include/test_utils.h"
 #include "gtest/gtest.h"
 #include "test/common/cuda_op_test_utils.h"
 #include "test/common/quantization_test_utils.h"
@@ -30,6 +16,7 @@
 #include "core/util/qmath.h"
 
 #include <algorithm>
+#include <random>
 
 // in test_main.cc
 extern std::unique_ptr<Ort::Env> ort_env;
@@ -39,35 +26,54 @@ namespace onnxruntime {
 namespace test {
 
 TEST(MatmulFloatRyzenTest, MatMulRyzen) {
-	const ORTCHAR_T* ort_model_path = ORT_TSTR("testdata\\matmul_1_op_version_20.onnx");
-	std::cout << "Begin : Input creation.." << std::endl;
-	Ort::SessionOptions so;
-	Ort::Session session(*ort_env, ort_model_path, so);
-	std::cout << "End  : Session creation.." << std::endl;
-	auto input_shape = session.GetInputTypeInfo(0).GetTensorTypeAndShapeInfo().GetShape();
-	//TBD : input_shape[0] = 1;
+//   OpTester test("MatMul", 20);
+//   test.AddInput<float>("T1", {4, 3}, {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0});
+//   test.AddInput<float>("T2", {3, 2}, {1.0, 1.0, 1.0, 1.0, 1.0, 1.0});
+//   test.AddOutput<float>("T3", {4, 2}, {3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0});
 
-	TensorShape input_shape_x{input_shape};
-	RandomValueGenerator generator;
-	std::vector<float> input_x = generator.Uniform<float>(input_shape_x.GetDims(),
-			7.0, 7.0);
-	OrtValue ml_value_x;
-	CreateMLValue<float>(input_shape_x.GetDims(), input_x.data(), OrtMemoryInfo(), &ml_value_x);
+//   // use ryzen EP
+//   auto ryzen_ep = []() -> std::vector<std::unique_ptr<IExecutionProvider>> {
+//     std::vector<std::unique_ptr<IExecutionProvider>> execution_providers;
+//     execution_providers.push_back(DefaultRyzenAIExecutionProvider());
+//     return execution_providers;
+//   };
+  Ort::SessionOptions so;
+ //so.AddConfigEntry(kOrtSessionOptionsDisableCPUEPFallback, "1");
+  onnxruntime::ProviderOptions options;
+  // no real options currently but set a value to make sure it's passed through. requires manual validation.
+  options["one"] = "two";
+  so.AppendExecutionProvider("RYZENAI", options);
+  const ORTCHAR_T* ort_model_path = ORT_TSTR("testdata\\matmul_1_op_version_20.onnx");
+  Ort::Session session(*ort_env, ort_model_path, so);
+  std::array<float, 3 * 2> input0_data = {7, 7, 7, 7, 7, 7};
 
-	NameMLValMap feeds;
-	feeds.insert(std::make_pair("X", ml_value_x));
+  auto memory_info = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
+  std::vector<Ort::Value> ort_inputs;
+  std::vector<const char*> ort_input_names;
 
-	EPVerificationParams params;
-	params.ep_node_assignment = ExpectedEPNodeAssignment::All;
-	//params.fp32_abs_err = 0.0002f;
-	//params.graph_verifier = &verify;
-	auto ep_vec = DefaultRyzenAIExecutionProvider();
+  // Add input0
+  std::array<int64_t, 2> inputs_shape{3 , 2};
+  ort_inputs.emplace_back(Ort::Value::CreateTensor<float>(
+      memory_info, input0_data.data(), input0_data.size(), inputs_shape.data(), inputs_shape.size()));
+  ort_input_names.push_back("X");
 
-	RunWithEP(ort_model_path, "MatMulRyzen", std::move(ep_vec), feeds, params);
+
+  // Run session and get outputs
+  std::array<const char*, 1> output_names{"Y"};
+  std::vector<Ort::Value> ort_outputs = session.Run(Ort::RunOptions{nullptr}, ort_input_names.data(), ort_inputs.data(),
+                                                    ort_inputs.size(), output_names.data(), output_names.size());
+
+//      auto ep_vec = DefaultRyzenAIExecutionProvider();
+//      RunWithEP(ort_model_path, "MatMulRyzen", std::move(ep_vec), feeds, params);
+  // Check output shape.
+  Ort::Value& ort_output = ort_outputs[0];
+  auto typeshape = ort_output.GetTensorTypeAndShapeInfo();
+  std::vector<int64_t> output_shape = typeshape.GetShape();
+//   auto ep_vec = ryzen_ep();
+//     test.Run(so.GetConst().clone(), OpTester::ExpectResult::kExpectSuccess, "", {}, nullptr,
+//              &ep_vec, {});
 }
 
 } //test
 
 }// onnxruntime
-
-
