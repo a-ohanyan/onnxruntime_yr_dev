@@ -15,7 +15,7 @@ struct KernelRegistryAndStatus {
 };
 
 RyzenAIExecutionProvider::RyzenAIExecutionProvider(const RyzenAIExecutionProviderInfo& info)
-    : IExecutionProvider{onnxruntime::kRyzenAIExecutionProvider, OrtDevice(OrtDevice::CPU, OrtDevice::MemType::DEFAULT, 0)}, info_{info} {}
+    : IExecutionProvider{onnxruntime::kRyzenAIExecutionProvider}, info_{info} {}
 
 std::vector<AllocatorPtr> RyzenAIExecutionProvider::CreatePreferredAllocators() {
 
