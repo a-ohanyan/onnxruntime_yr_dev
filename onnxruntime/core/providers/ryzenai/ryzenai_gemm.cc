@@ -4,13 +4,13 @@ namespace onnxruntime {
 
 ONNX_RYZENAI_OPERATOR_TYPED_KERNEL(
     MatMul,
-    20,
+    13,
     float,
     KernelDefBuilder().TypeConstraint("T", DataTypeImpl::GetTensorType<float>()),
     ryzenai::MatMul<float>);
 ONNX_RYZENAI_OPERATOR_TYPED_KERNEL(
     MatMul,
-    20,
+    13,
     int,
     KernelDefBuilder().TypeConstraint("T", DataTypeImpl::GetTensorType<int>()),
     ryzenai::MatMul<int>);
@@ -23,7 +23,7 @@ Status MatMul<T>::Compute(OpKernelContext* context) const {
   const auto* A = context->Input<Tensor>(0);
   const auto* B = context->Input<Tensor>(1);
 
-  std::cout << "In RyzenAI MatMul .. " << std::endl;
+  std::cout << "Begin In RyzenAI MatMul ... " << std::endl;
 
   // Validate input shapes (assuming 2D matrices for simplicity)
   if (A->Shape().NumDimensions() != 2 || B->Shape().NumDimensions() != 2) {
@@ -58,7 +58,7 @@ Status MatMul<T>::Compute(OpKernelContext* context) const {
       c_data[i * B_cols + j] = sum;
     }
   }
-  printf("ryzenai matmul \n");
+  printf("End In RyzenAI matmul ... \n");
   return onnxruntime::Status::OK();
 }
   }

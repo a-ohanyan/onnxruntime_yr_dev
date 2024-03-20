@@ -1119,6 +1119,21 @@ common::Status InferenceSession::TransformGraph(onnxruntime::Graph& graph, bool 
 
   // Run Ahead Of time function inlining
   GraphPartitioner partitioner(kernel_registry_manager_, execution_providers_);
+  auto tmp_are_nodes_assigned_to_cpu_ep = [](const Graph& graph) -> bool {
+	  for (const auto& node : graph.Nodes()) {
+		  const auto& node_provider = node.GetExecutionProviderType();
+		  if (node_provider == onnxruntime::kRyzenAIExecutionProvider) {
+			  std::cout << "RYZEN Exist" << node << std::endl;
+		  }
+
+		  if (node_provider == onnxruntime::kCpuExecutionProvider) {
+			  std::cout << "CPU Exist" << node << std::endl;
+		  }
+		  if (node_provider.empty())
+			  std::cout << "Empty node name: " << node << std::endl;
+	  }
+	  return true;
+  };
   if (const bool disable_aot_function_inlining =
           session_options_.config_options.GetConfigOrDefault(
               kOrtSessionOptionsDisableAheadOfTimeFunctionInlining, "0") == "1";
@@ -1209,11 +1224,13 @@ common::Status InferenceSession::TransformGraph(onnxruntime::Graph& graph, bool 
       };
     }
   }
+      std::cout << "File: inference_session.cc Line: 1228 " <<  tmp_are_nodes_assigned_to_cpu_ep(graph) << std::endl;
 
   // Do partitioning based on execution providers' capabilities.
   ORT_RETURN_IF_ERROR_SESSIONID_(partitioner.Partition(graph, session_state_->GetMutableFuncMgr(), transform_layout_fn,
                                                        session_options_.config_options, *session_logger_,
                                                        mode, debug_graph_fn));
+      std::cout << "File: inference_session.cc Line: 1234 " <<  tmp_are_nodes_assigned_to_cpu_ep(graph) << std::endl;
 
   // apply Level2 and higher transformers.
   // we do not run Level 1 again as those transformers assume partitioning will run later to do node assignment.
@@ -1870,7 +1887,6 @@ common::Status InferenceSession::Initialize() {
           break;  // Make sure only one ep can run CUDA graph.
         }
       }
-
       const bool disable_cpu_ep_fallback = session_options_.config_options.GetConfigOrDefault(
                                                kOrtSessionOptionsDisableCPUEPFallback, "0") == "1";
 

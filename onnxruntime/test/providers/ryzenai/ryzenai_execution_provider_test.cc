@@ -10,7 +10,7 @@ TEST(RyzenAIExecutionProviderTest, MetadataTest) {
   RyzenAIExecutionProviderInfo info;
   auto provider = std::make_unique<RyzenAIExecutionProvider>(info);
   EXPECT_TRUE(provider != nullptr);
-  ASSERT_EQ(provider->GetOrtDeviceByMemType(OrtMemTypeDefault).Type(), OrtDevice::NPU);
+  ASSERT_EQ(provider->GetOrtDeviceByMemType(OrtMemTypeDefault).Type(), OrtDevice::CPU);
 }
 }  // namespace test
 }  // namespace onnxruntime

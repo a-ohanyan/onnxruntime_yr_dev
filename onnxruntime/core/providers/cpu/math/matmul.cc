@@ -58,36 +58,36 @@ ONNX_CPU_OPERATOR_VERSIONED_TYPED_KERNEL(
         .TypeConstraint("T", BuildKernelDefConstraints<int64_t, uint64_t>()),
     MatMul<int64_t>);
 
-ONNX_CPU_OPERATOR_TYPED_KERNEL(
-    MatMul,
-    13,
-    float,
-    KernelDefBuilder().TypeConstraint("T", DataTypeImpl::GetTensorType<float>()),
-    MatMul<float>);
-
-ONNX_CPU_OPERATOR_TYPED_KERNEL(
-    MatMul,
-    13,
-    double,
-    KernelDefBuilder().TypeConstraint("T", DataTypeImpl::GetTensorType<double>()),
-    MatMul<double>);
-
-ONNX_CPU_OPERATOR_TYPED_KERNEL(
-    MatMul,
-    13,
-    int32_t,
-    KernelDefBuilder()
-        .TypeConstraint("T", BuildKernelDefConstraints<int32_t, uint32_t>()),
-    MatMul<int32_t>);
-
-ONNX_CPU_OPERATOR_TYPED_KERNEL(
-    MatMul,
-    13,
-    int64_t,
-    KernelDefBuilder()
-        .TypeConstraint("T", BuildKernelDefConstraints<int64_t, uint64_t>()),
-    MatMul<int64_t>);
-
+//ONNX_CPU_OPERATOR_TYPED_KERNEL(
+//    MatMul,
+//    13,
+//    float,
+//    KernelDefBuilder().TypeConstraint("T", DataTypeImpl::GetTensorType<float>()),
+//    MatMul<float>);
+//
+//ONNX_CPU_OPERATOR_TYPED_KERNEL(
+//    MatMul,
+//    13,
+//    double,
+//    KernelDefBuilder().TypeConstraint("T", DataTypeImpl::GetTensorType<double>()),
+//    MatMul<double>);
+//
+//ONNX_CPU_OPERATOR_TYPED_KERNEL(
+//    MatMul,
+//    13,
+//    int32_t,
+//    KernelDefBuilder()
+//        .TypeConstraint("T", BuildKernelDefConstraints<int32_t, uint32_t>()),
+//    MatMul<int32_t>);
+//
+//ONNX_CPU_OPERATOR_TYPED_KERNEL(
+//    MatMul,
+//    13,
+//    int64_t,
+//    KernelDefBuilder()
+//        .TypeConstraint("T", BuildKernelDefConstraints<int64_t, uint64_t>()),
+//    MatMul<int64_t>);
+//
 template <typename T>
 Status MatMul<T>::Compute(OpKernelContext* ctx) const {
   concurrency::ThreadPool* thread_pool = ctx->GetOperatorThreadPool();
@@ -108,7 +108,6 @@ Status MatMul<T>::Compute(OpKernelContext* ctx) const {
   const auto* a_data = reinterpret_cast<const T*>(a->DataRaw());
   const auto* b_data = reinterpret_cast<const T*>(b->DataRaw());
   auto* y_data = reinterpret_cast<T*>(y->MutableDataRaw());
-
   // TODO: replace it with GemmBatch for performance, it's OK for now as GemmBatch unrolls as well
   size_t max_len = helper.OutputOffsets().size();
   for (size_t i = 0; i < max_len; i++) {

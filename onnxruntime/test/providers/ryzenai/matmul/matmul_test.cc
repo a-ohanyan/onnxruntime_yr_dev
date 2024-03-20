@@ -38,12 +38,12 @@ TEST(MatmulFloatRyzenTest, MatMulRyzen) {
 //     return execution_providers;
 //   };
   Ort::SessionOptions so;
- //so.AddConfigEntry(kOrtSessionOptionsDisableCPUEPFallback, "1");
   onnxruntime::ProviderOptions options;
   // no real options currently but set a value to make sure it's passed through. requires manual validation.
   options["one"] = "two";
   so.AppendExecutionProvider("RYZENAI", options);
-  const ORTCHAR_T* ort_model_path = ORT_TSTR("testdata\\matmul_1_op_version_20.onnx");
+ //so.AddConfigEntry(kOrtSessionOptionsDisableCPUEPFallback, "1");
+  const ORTCHAR_T* ort_model_path = ORT_TSTR("C:/Users/alina/ID_comit/onnxruntime/test/testdata/matmul_1_op_version_13.onnx");
   Ort::Session session(*ort_env, ort_model_path, so);
   std::array<float, 3 * 2> input0_data = {7, 7, 7, 7, 7, 7};
 
@@ -66,6 +66,7 @@ TEST(MatmulFloatRyzenTest, MatMulRyzen) {
 //      auto ep_vec = DefaultRyzenAIExecutionProvider();
 //      RunWithEP(ort_model_path, "MatMulRyzen", std::move(ep_vec), feeds, params);
   // Check output shape.
+
   Ort::Value& ort_output = ort_outputs[0];
   auto typeshape = ort_output.GetTensorTypeAndShapeInfo();
   std::vector<int64_t> output_shape = typeshape.GetShape();

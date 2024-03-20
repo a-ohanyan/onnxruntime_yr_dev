@@ -15,7 +15,7 @@ struct KernelRegistryAndStatus {
 };
 
 RyzenAIExecutionProvider::RyzenAIExecutionProvider(const RyzenAIExecutionProviderInfo& info)
-    : IExecutionProvider{onnxruntime::kRyzenAIExecutionProvider, OrtDevice(OrtDevice::NPU, OrtDevice::MemType::DEFAULT, 10)}, info_{info} {}
+    : IExecutionProvider{onnxruntime::kRyzenAIExecutionProvider, OrtDevice(OrtDevice::CPU, OrtDevice::MemType::DEFAULT, 0)}, info_{info} {}
 
 std::vector<AllocatorPtr> RyzenAIExecutionProvider::CreatePreferredAllocators() {
 
@@ -26,8 +26,8 @@ std::vector<AllocatorPtr> RyzenAIExecutionProvider::CreatePreferredAllocators() 
 }
 
 
-class ONNX_OPERATOR_TYPED_KERNEL_CLASS_NAME(kRyzenAIExecutionProvider, kOnnxDomain, 20, float, MatMul);
-class ONNX_OPERATOR_TYPED_KERNEL_CLASS_NAME(kRyzenAIExecutionProvider, kOnnxDomain, 20, int, MatMul);
+class ONNX_OPERATOR_TYPED_KERNEL_CLASS_NAME(kRyzenAIExecutionProvider, kOnnxDomain, 13, float, MatMul);
+class ONNX_OPERATOR_TYPED_KERNEL_CLASS_NAME(kRyzenAIExecutionProvider, kOnnxDomain, 13, int, MatMul);
 
 // !!PLEASE READ BELOW!! Following that, add new entries above this comment
 
@@ -71,9 +71,9 @@ class ONNX_OPERATOR_TYPED_KERNEL_CLASS_NAME(kRyzenAIExecutionProvider, kOnnxDoma
 Status RegisterRyzenAIKernels(KernelRegistry& kernel_registry) {
   static const BuildKernelCreateInfoFn function_table[] = {
     BuildKernelCreateInfo<void>,  // default entry to avoid the list become empty after ops-reducing
-    BuildKernelCreateInfo<ONNX_OPERATOR_TYPED_KERNEL_CLASS_NAME(kRyzenAIExecutionProvider, kOnnxDomain, 20,
+    BuildKernelCreateInfo<ONNX_OPERATOR_TYPED_KERNEL_CLASS_NAME(kRyzenAIExecutionProvider, kOnnxDomain, 13,
                                                                           float, MatMul)>,
-    BuildKernelCreateInfo<ONNX_OPERATOR_TYPED_KERNEL_CLASS_NAME(kRyzenAIExecutionProvider, kOnnxDomain, 20,
+    BuildKernelCreateInfo<ONNX_OPERATOR_TYPED_KERNEL_CLASS_NAME(kRyzenAIExecutionProvider, kOnnxDomain, 13,
                                                                           int, MatMul)>
   };
 

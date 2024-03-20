@@ -179,5 +179,5 @@
     "pointers": "cpp",
     "*.inc": "cpp"
   },
-  "cmake.sourceDirectory": "C:/Users/yraparti/onnxrt_work/onnxruntime/cmake"
+  "cmake.sourceDirectory": "C:/Users/alina/ID_comit/cmake"
 }
