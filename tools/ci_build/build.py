@@ -1245,6 +1245,7 @@ def generate_build_tree(
         or (args.use_tensorrt and args.use_tensorrt_oss_parser)
         or args.use_openvino
         or args.use_vitisai
+        or args.use_ryzenai
         or args.gen_doc
     ):
         cmake_args += ["-Donnxruntime_USE_FULL_PROTOBUF=ON", "-DProtobuf_USE_STATIC_LIBS=ON"]
@@ -2182,6 +2183,7 @@ def build_python_wheel(
     use_openvino,
     use_tvm,
     use_vitisai,
+    use_ryzenai,
     use_acl,
     use_armnn,
     use_dml,
@@ -2235,6 +2237,8 @@ def build_python_wheel(
             args.append("--use_tvm")
         elif use_vitisai:
             args.append("--use_vitisai")
+        elif use_ryzenai:
+            args.append("--use_ryzenai")
         elif use_acl:
             args.append("--use_acl")
         elif use_armnn:
@@ -2853,6 +2857,7 @@ def main():
                 args.use_openvino,
                 args.use_tvm,
                 args.use_vitisai,
+                args.use_ryzenai,
                 args.use_acl,
                 args.use_armnn,
                 args.use_dml,

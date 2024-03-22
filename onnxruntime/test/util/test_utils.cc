@@ -128,11 +128,12 @@ static gsl::span<const std::byte> GetModelBytes(ModelPathOrBytes model_path_or_b
   byte_buffer_out = std::move(byte_buffer);
   return gsl::span<const std::byte>(byte_buffer_out);
 }
- 
-void RunWithEP(ModelPathOrBytes model_path_or_bytes, std::string_view log_id,
+
+/*
+void RunWithEP(ModelPathOrBytes model_path_or_bytes, std::string_view,
                                std::unique_ptr<IExecutionProvider> execution_provider,
                                const NameMLValMap& feeds,
-                               const EPVerificationParams& params) {
+                               const EPVerificationParams&) {
 
   std::cout << "Begin : RunWithEP..." << std::endl;
   std::vector<std::byte> model_data_buffer{};
@@ -185,6 +186,7 @@ void RunWithEP(ModelPathOrBytes model_path_or_bytes, std::string_view log_id,
     //VerifyOutputs(output_names, expected_fetches, fetches, params);
   //}
 }
+*/
 
 void RunAndVerifyOutputsWithEP(ModelPathOrBytes model_path_or_bytes, std::string_view log_id,
                                std::unique_ptr<IExecutionProvider> execution_provider,

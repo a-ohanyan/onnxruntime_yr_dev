@@ -5,6 +5,9 @@
 #include "default_providers.h"
 #include "providers.h"
 #include "core/providers/cpu/cpu_provider_factory_creator.h"
+#ifdef USE_RYZENAI
+#include "core/providers/ryzenai/ryzenai_provider_factory_creator.h"
+#endif
 #ifdef USE_COREML
 #include "core/providers/coreml/coreml_provider_factory.h"
 #endif
@@ -23,9 +26,11 @@ std::unique_ptr<IExecutionProvider> DefaultCpuExecutionProvider(bool enable_aren
   return CPUProviderFactoryCreator::Create(enable_arena)->CreateProvider();
 }
 
+#ifdef USE_RYZENAI
 std::unique_ptr<IExecutionProvider> DefaultRyzenAIExecutionProvider() {
   return RyzenAIProviderFactoryCreator::Create({})->CreateProvider();
 }
+#endif
 
 std::unique_ptr<IExecutionProvider> DefaultTensorrtExecutionProvider() {
 #ifdef USE_TENSORRT

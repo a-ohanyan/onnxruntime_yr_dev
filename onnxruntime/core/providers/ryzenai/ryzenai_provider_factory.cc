@@ -1,5 +1,7 @@
 #include <memory>
 
+#include "core/providers/ryzenai/ryzenai_provider_factory.h"
+
 #include "core/providers/ryzenai/ryzenai_execution_provider.h"
 #include "core/providers/ryzenai/ryzenai_provider_factory_creator.h"
 #include "core/session/abi_session_options_impl.h"

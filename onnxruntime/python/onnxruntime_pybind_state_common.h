@@ -119,6 +119,9 @@ struct OrtStatus {
 #include "core/providers/cuda/cuda_provider_factory.h"
 #include "core/providers/cuda/cuda_execution_provider_info.h"
 #endif
+#ifdef USE_RYZENAI
+#include "core/providers/ryzenai/ryzenai_provider_factory.h"
+#endif
 #ifdef USE_ROCM
 #include "core/providers/rocm/rocm_provider_factory.h"
 #include "core/providers/rocm/rocm_execution_provider_info.h"

@@ -75,6 +75,8 @@ elif parse_arg_remove_boolean(sys.argv, "--use_tvm"):
     package_name = "onnxruntime-tvm"
 elif parse_arg_remove_boolean(sys.argv, "--use_vitisai"):
     package_name = "onnxruntime-vitisai"
+elif parse_arg_remove_boolean(sys.argv, "--use_ryzenai"):
+    package_name = "onnxruntime-ryzenai"
 elif parse_arg_remove_boolean(sys.argv, "--use_acl"):
     package_name = "onnxruntime-acl"
 elif parse_arg_remove_boolean(sys.argv, "--use_armnn"):
